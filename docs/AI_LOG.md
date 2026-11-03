@@ -9,4 +9,4 @@ Qué se usó / modificó / descartó: Se adoptó la estructura base de carpetas 
 Archivos y commit: docs/AI_LOG.md, README.md, .gitignore (Commit: INSERTAR_AQUI_HASH_CORTO)
 Verificación: Repositorio remoto vinculado y estructura de carpetas confirmada localmente.
 Aprendizaje: Flujo de trabajo colaborativo en Git mediante PRs y separación de la arquitectura en capas.
-Commit: INSERTAR_AQUI_HASH_CORTO
+Commit: afc7f95
