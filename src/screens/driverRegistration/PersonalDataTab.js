@@ -57,8 +57,8 @@ export default function PersonalDataTab() {
             message = 'Debe ser un correo electrónico válido';
         }
 
-        setErrors((prevErrors) => ({
-            ...prevErrors,
+        setErrors((previousErrors) => ({
+            ...previousErrors,
             [field]: message,
         }));
     }
