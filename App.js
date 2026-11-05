@@ -1,6 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
-import {NavigationContainer} from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack'
+import 'react-native-gesture-handler';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import DriverRegistrationNavigator from './src/navigation/DriverRegistrationNavigator';
 
@@ -13,18 +14,9 @@ export default function App() {
         <Stack.Screen
           name="DriverRegistration"
           component={DriverRegistrationNavigator}
-          options={{title: 'Registro de conductor'}}
+          options={{ title: 'Registro de conductor' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

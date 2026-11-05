@@ -27,7 +27,7 @@ export default function DocumentsTab() {
             message = 'Debe ser un correo electrónico válido';
         }
 
-        setErrors((prevErrors) => ({
+        setErrors((previousErrors) => ({
             ...previousErrors,
             [field]: message,
         }));

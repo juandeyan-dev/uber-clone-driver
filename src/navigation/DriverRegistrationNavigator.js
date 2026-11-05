@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { createMaterialTopNavigator } from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PersonalDataTab from '../screens/driverRegistration/PersonalDataTab';
 import VehicleTab from '../screens/driverRegistration/VehicleTab';
 import DocumentsTab from '../screens/driverRegistration/DocumentsTab';

@@ -18,7 +18,7 @@ export default function VehicleTab() {
         let normalizedValue = value;
 
         if (field === 'plate') {
-            normalizeValue = value.toUpperCase().replace(/\s/g, '');
+            normalizedValue = value.toUpperCase().replace(/\s/g, '');
         }
 
         updateField(field, normalizedValue);
@@ -26,7 +26,7 @@ export default function VehicleTab() {
         let message = '';
 
         if (!normalizedValue.trim()) {
-            message = 'este campo es obligatorio';
+            message = 'Este campo es obligatorio.';
         }
 
         if (
@@ -34,14 +34,14 @@ export default function VehicleTab() {
             normalizedValue.trim() !== '' &&
             !/^[A-Z]{3}\d{3}$/.test(normalizedValue)
         ) {
-            message = 'Debe tener el formato ABC123';
+            message = 'La placa debe tener el formato ABC123.';
         }
 
         if (
             (field === 'brand' || field === 'model') &&
             normalizedValue.length > 30
         ) {
-            message = 'No puede exceder los 30 caracteres';
+            message = 'Este campo no puede superar los 30 caracteres.';
         }
 
         if (
@@ -49,7 +49,7 @@ export default function VehicleTab() {
             normalizedValue.trim() !== '' &&
             !/^\d{4}$/.test(normalizedValue)
         ) {
-            message = 'El año debe tener 4 dígitos';
+            message = 'El año debe tener cuatro dígitos.';
         }
 
         if (
@@ -58,14 +58,15 @@ export default function VehicleTab() {
             normalizedValue.trim() !== '' &&
             Number(normalizedValue) < 6
         ) {
-            message = 'la categoría XL requiere minimo 6 pasajeros';
+            message = 'La categoría XL requiere mínimo 6 pasajeros.';
         }
 
         setErrors((previousErrors) => ({
             ...previousErrors,
             [field]: message,
-        }))
+        }));
     }
+
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -73,7 +74,7 @@ export default function VehicleTab() {
             <Text style={styles.label}>Categoría</Text>
             <View style={styles.optionsRow}>
                 {[
-                    { label: 'Economico', value: 'economico' },
+                    { label: 'Economico', value: 'economy' },
                     { label: 'XL', value: 'xl' },
                     { label: 'Premium', value: 'premium' },
                 ].map((option) => (
@@ -89,16 +90,26 @@ export default function VehicleTab() {
                     </TouchableOpacity>
                 ))}
             </View>
-            <ErrorText message={errors.category} />
+            <ErrorMessage message={errors.category} />
 
             <Text style={styles.label}>Placa</Text>
             <TextInput
                 style={styles.input}
                 value={vehicle.plate}
-                maxLength={30}
+                maxLength={6}
                 onChangeText={(value) => handleChange('plate', value)}
             />
-            <ErrorText message={errors.plate} />
+            <ErrorMessage message={errors.plate} />
+
+            <Text style={styles.label}>Marca</Text>
+            <TextInput
+                style={styles.input}
+                value={vehicle.brand}
+                maxLength={30}
+                onChangeText={(value) => handleChange('brand', value)}
+                placeholder="Ejemplo: Chevrolet"
+            />
+            <ErrorMessage message={errors.brand} />
 
             <Text style={styles.label}>Modelo</Text>
             <TextInput
@@ -108,7 +119,7 @@ export default function VehicleTab() {
                 onChangeText={(value) => handleChange('model', value)}
                 placeholder="Ejemplo: Onix"
             />
-            <ErrorText message={errors.model} />
+            <ErrorMessage message={errors.model} />
 
             <Text style={styles.label}>Año</Text>
             <TextInput
@@ -119,7 +130,7 @@ export default function VehicleTab() {
                 onChangeText={(value) => handleChange('year', value)}
                 placeholder="Ejemplo: 2020"
             />
-            <ErrorText message={errors.year} />
+            <ErrorMessage message={errors.year} />
 
             <Text style={styles.label}>Color</Text>
             <TextInput
@@ -128,7 +139,7 @@ export default function VehicleTab() {
                 onChangeText={(value) => handleChange('color', value)}
                 placeholder="Ejemplo: Rojo"
             />
-            <ErrorText message={errors.color} />
+            <ErrorMessage message={errors.color} />
 
             <Text style={styles.label}>Capacidad de pasajeros</Text>
             <TextInput
@@ -138,7 +149,7 @@ export default function VehicleTab() {
                 onChangeText={(value) => handleChange('capacity', value)}
                 placeholder="Ejemplo: 4"
             />
-            <ErrorText message={errors.capacity} />
+            <ErrorMessage message={errors.capacity} />
 
             <Text style={styles.label}>Foto del vehículo</Text>
             <TouchableOpacity
