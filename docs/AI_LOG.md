@@ -31,6 +31,6 @@ Objetivo: Crear pantalla inicial (MapScreen) con manejo de estado Disponible/No 
 Prompt: "import React, { useState, useEffect } from 'react'... export default function MapScreen() {..." (código inicial de la vista).
 Resumen de la respuesta: El Tech Lead detectó riesgos de "crash" al intentar renderizar objetos nulos en JSX y corrigió el uso de sentencias if dentro del return. Se implementó un operador ternario para manejar el estado "Cargando" (Esperando ubicación...).
 Qué se usó / modificó / descartó: Se creó la interfaz base MapScreen.js incorporando el componente Switch y conectándolo al estado local isAvailable, validando las coordenadas del hook de ubicación.
-Archivos y commit: src/screens/MapScreen.js (Commit: INSERTAR_AQUI_HASH_CORTO)
+Archivos y commit: src/screens/MapScreen.js (Commit: 92bd0ac)
 Verificación: La pantalla renderiza correctamente sin crashes cuando el estado inicial del GPS es nulo.
 Aprendizaje: Uso correcto del operador ternario en JSX y validación estricta de propiedades anidadas de objetos (location.coords) para evitar errores de referencia en React Native.
