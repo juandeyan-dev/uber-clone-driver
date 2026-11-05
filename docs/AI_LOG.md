@@ -377,8 +377,29 @@ Commit: afc7f95
 
 - Qué se usó / modificó / descartó: Se utilizó la función propuesta como base y se adaptó manualmente en el repositorio. La función recibe `distanceKm`, `durationMin`, `category` y `tip`, y devuelve `fare`, `commission` y `driverEarnings`. Se descartaron los bloques temporales de prueba y los `console.log` antes del commit final.
 
-- Archivos y commit: `src/utils/calculateFare.js` — `[PEGAR_HASH_REAL]`
+- Archivos y commit: `src/utils/calculateFare.js` — `4f0cf3c`
 
 - Verificación: Se probó el ejemplo oficial de 8,5 km y 22 minutos. Para `economy`, el resultado esperado fue una tarifa de 19.200 COP, comisión de 3.840 COP y ganancia neta de 15.360 COP. Para `xl`, el resultado esperado fue una tarifa de 26.900 COP, comisión de 5.380 COP y ganancia neta de 21.520 COP. También se verificó que una propina de 2.000 COP se sumara completamente a la ganancia del conductor.
 
 - Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useRegistration } from './RegistrationContext';
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { useRegistration } from './RegistrationContext'; // AI-assistant: see docs/AI_LOG.md #8
 
-// AI-assistant: see docs/AI_LOG.md #4
+// AI-assistant: see docs/AI_LOG.md #4, se agregan modificaciones #8
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
 export default function PersonalDataTab() {
@@ -10,6 +11,7 @@ export default function PersonalDataTab() {
     const personal = form.personal;
 
     const [errors, setErrors] = useState({});
+    const [showBirthDatePicker, setShowBirthDatePicker] = useState(false);
 
     function updateField(field, value) {
         updateSection('personal', field, value);
@@ -69,6 +71,27 @@ export default function PersonalDataTab() {
         validateFields(field, value);
     }
 
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function handleBirthDateChange(event, selectedDate) {
+        setShowBirthDatePicker(false)
+
+        if (!selectedDate) {
+            return;
+        }
+
+        const formattedDate = formatDate(selectedDate);
+
+        updateField('birthDate', formattedDate);
+        validateFields('birthDate', formattedDate)
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Datos Personales</Text>
@@ -89,7 +112,7 @@ export default function PersonalDataTab() {
                 onChangeText={(value) => handleChange('fullName', value)}
                 placeholder="Ejemplo: Stiven Hernandez"
             />
-            <ErrorMessage message={errors.fullName} />
+            <ErrorMessage message={errors.fullName}/>
 
             <Text style={styles.label}>Documento de identidad</Text>
             <TextInput
@@ -112,12 +135,30 @@ export default function PersonalDataTab() {
             <ErrorMessage message={errors.phone} />
 
             <Text style={styles.label}>Fecha de nacimiento</Text>
-            <TextInput
-                style={styles.input}
-                value={personal.birthDate}
-                onChangeText={(value) => handleChange('birthDate', value)}
-                placeholder="YYYY-MM-DD"
-            />
+
+            <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowBirthDatePicker(true)}
+            >
+                <Text style={styles.dateButtonText}>
+                    {personal.birthDate || 'Seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {showBirthDatePicker && (
+                <DateTimePicker
+                    value={
+                        personal.birthDate
+                            ? new Date(`${personal.birthDate}T12:00:00`)
+                            : new Date(2000, 0, 1)
+                    }
+                    mode="date"
+                    display="default"
+                    maximumDate={new Date()}
+                    onChange={handleBirthDateChange}
+                />
+            )}
+
             <ErrorMessage message={errors.birthDate} />
 
             <Text style={styles.label}>Genero</Text>
@@ -215,6 +256,17 @@ const styles = StyleSheet.create({
     languageContainer: {
         flexDirection: 'row',
         gap: 10,
+    },
+    dateButton: {
+        borderWidth: 1,
+        borderColor: '#bdbdbd',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: '#fff',
+    },
+    dateButtonText: {
+        color: '#333',
     },
     optionButton: {
         borderWidth: 1,
