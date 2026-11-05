@@ -13,7 +13,7 @@ Commit: afc7f95
 
 ### Entrada #2
 - Fecha: 2026-11-04
-- Integrante: Stiven Apellido
+- Integrante: Stiven Hernandez
 - Herramienta: Runable
 - Objetivo: Entender los requerimientos de mi parte del proyecto y revisar el estado del repositorio
 - Prompt: "esta es la instruccion base... haremos este proyecto, te compartire el github despues, de momento van estas instrucciones    para contexto y entendimiento" (adjunté el PDF del proyecto y mi guía de tareas)
@@ -26,7 +26,7 @@ Commit: afc7f95
 ### Entrada #3
 
 - Fecha: 2026-11-04
-- Integrante: Stiven Apellido
+- Integrante: Stiven Hernandez
 - Herramienta: Manus
 - Objetivo: Definir el flujo de trabajo para implementar la parte del conductor utilizando Manus como guía técnica, sin que la herramienta modifique directamente el repositorio.
 
@@ -45,7 +45,7 @@ Commit: afc7f95
 ### Entrada #4
 
 - Fecha: 2026-11-04
-- Integrante: Stiven Apellido
+- Integrante: Stiven Hernandez
 - Herramienta: Manus
 - Objetivo: Crear la estructura base del registro del conductor dividida en tres pestañas: datos personales, vehículo y documentos/pagos.
 
@@ -70,7 +70,7 @@ Commit: afc7f95
 ### Entrada #5
 
 - Fecha: 2026-11-04
-- Integrante: Stiven Apellido
+- Integrante: Stiven Hernandez
 - Herramienta: Manus
 - Objetivo: Resolver los errores de ejecución encontrados al implementar y probar la estructura base del registro del conductor con tres pestañas.
 
@@ -296,3 +296,89 @@ Commit: afc7f95
 - VehicleTab: Corrige la declaración y asignación de la variable en 'handleChange' para prevenir el fallo 'normalizeValue doesn't exist' al transformar la placa a mayúsculas.
 
   URL: https://manus.im/share/H1JlQmIwGf9H8760uNOvap . era manus no runable :v JAJAJAJA perdon
+
+  ### Entrada #6
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Crear el archivo compartido `src/config/pricing.js` con las reglas base de tarifas del proyecto UberClone Conductor.
+
+- Prompt: "bueno vamos con mi lista
+
+  Lista corregida y completa
+  Día 1 — Tarifas, registro y aprobación
+
+  Mañana:
+  Crear pricing.js.
+  Crear y probar calculateFare.js.
+  Congelar con Juan el contrato de perfiles y viajes.
+  Confirmar los archivos compartidos en main.
+  Integrar selector de fecha de nacimiento.
+  Validar edad mínima de 18 años.
+  Integrar fechas de vencimiento de documentos.
+  Validar que las fechas sean posteriores a hoy.
+
+  Tarde:
+  Completar validaciones personales.
+  Completar validaciones del vehículo.
+  Completar validaciones de documentos y pagos.
+  Integrar selección de fotos.
+  Subir fotos a Cloudinary.
+  Mostrar y exigir la comisión del 20 %.
+  Crear pantalla Pendiente de Aprobación.
+  Guardar isApproved: false.
+  Bloquear el acceso al mapa y a Disponible mientras no exista aprobación.
+
+  Día 2 — Perfil, ganancias, historial y entrega
+  Mañana:
+  Crear perfil y configuración.
+  Implementar edición de datos personales, vehículo y documentos.
+  Implementar idioma y preferencias con AsyncStorage.
+  Implementar cierre de sesión.
+  Crear useEarnings.
+  Calcular métricas con useMemo para hoy, semana y mes.
+  Mostrar viajes, total facturado, comisión, propinas, ganancia neta, promedio y saldo.
+
+  Tarde:
+  Crear historial con FlatList.
+  Agregar límite o paginación de aproximadamente 20 viajes.
+  Agregar filtros de tiempo y método de pago.
+  Agregar orden cronológico descendente.
+  Agregar estado vacío.
+  Crear detalle del viaje.
+  Dibujar la ruta con Polyline.
+  Mostrar distancia, duración, tarifa, comisión, propina, ganancia y calificación.
+  Completar docs/AI_LOG.md.
+  Agregar referencias AI-assisted.
+  Ejecutar pruebas finales.
+  Crear Pull Request de tu rama hacia main."
+
+- Resumen de la respuesta: Manus indicó que el siguiente punto pendiente era crear `src/config/pricing.js` antes de implementar `calculateFare.js`. Se definió una configuración centralizada para evitar duplicar las reglas de tarifas en distintas partes del proyecto.
+
+- Qué se usó / modificó / descartó: Se utilizó la estructura propuesta para crear manualmente `src/config/pricing.js`. El archivo incluye la tarifa base de 3500 COP, el valor de 1200 COP por kilómetro, el valor de 250 COP por minuto, la tarifa mínima de 6000 COP, la comisión de 0.20, los multiplicadores `economy`, `xl` y `premium`, y la unidad de redondeo de 100 COP. También se conservaron cambios en comentarios personales de archivos anteriores, sin modificar la lógica funcional. No se utilizaron API keys, tokens ni datos sensibles.
+
+- Archivos y commit: `src/config/pricing.js` — `39d9302`
+
+- Verificación: Se comprobó que el archivo estuviera ubicado en `src/config/pricing.js`, que contuviera los valores definidos en el documento oficial y que no incluyera información sensible. Después se creó y publicó el commit en la rama `stiven`.
+
+- Aprendizaje: Entendí que las reglas de tarifas deben estar centralizadas en un único archivo compartido para evitar diferencias entre los cálculos del pasajero, el conductor y el backend. También comprendí que la comisión debe expresarse como `0.20` y que las categorías deben utilizar los identificadores técnicos `economy`, `xl` y `premium`.
+
+### Entrada #7
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Crear la función pura `calculateFare` para calcular la tarifa, la comisión de la plataforma y la ganancia neta del conductor usando la configuración compartida del proyecto.
+
+- Prompt: "vale vamos con lo siguiente y con su respectiva entrada, cada entrada sera un commit vale?, de una vez digo que hare los comentarios del commit diferentes como habras notado"
+
+- Resumen de la respuesta: Manus explicó que la siguiente tarea era crear `src/utils/calculateFare.js` utilizando los valores de `src/config/pricing.js`. Se implementó el cálculo de distancia, duración, multiplicador por categoría, tarifa mínima, redondeo al múltiplo de 100 COP, comisión del 20 % y ganancia del conductor con la propina completa.
+
+- Qué se usó / modificó / descartó: Se utilizó la función propuesta como base y se adaptó manualmente en el repositorio. La función recibe `distanceKm`, `durationMin`, `category` y `tip`, y devuelve `fare`, `commission` y `driverEarnings`. Se descartaron los bloques temporales de prueba y los `console.log` antes del commit final.
+
+- Archivos y commit: `src/utils/calculateFare.js` — `[PEGAR_HASH_REAL]`
+
+- Verificación: Se probó el ejemplo oficial de 8,5 km y 22 minutos. Para `economy`, el resultado esperado fue una tarifa de 19.200 COP, comisión de 3.840 COP y ganancia neta de 15.360 COP. Para `xl`, el resultado esperado fue una tarifa de 26.900 COP, comisión de 5.380 COP y ganancia neta de 21.520 COP. También se verificó que una propina de 2.000 COP se sumara completamente a la ganancia del conductor.
+
+- Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
