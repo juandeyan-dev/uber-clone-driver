@@ -34,3 +34,15 @@ Qué se usó / modificó / descartó: Se creó la interfaz base MapScreen.js inc
 Archivos y commit: src/screens/MapScreen.js (Commit: 92bd0ac)
 Verificación: La pantalla renderiza correctamente sin crashes cuando el estado inicial del GPS es nulo.
 Aprendizaje: Uso correcto del operador ternario en JSX y validación estricta de propiedades anidadas de objetos (location.coords) para evitar errores de referencia en React Native.
+
+### Entrada #4
+Fecha: 2026-11-05
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Conectar el interruptor de disponibilidad (MapScreen) con el control de encendido/apagado del GPS (useDriverLocation).
+Prompt: "import React, {useState, useEffect} from 'react'... export default function useDriverLocation(isAvailable) {..." (código con el paso de parámetros y corrección de dependencias).
+Resumen de la respuesta: El Tech Lead detectó un problema de "Temporal Dead Zone" al intentar usar el estado antes de declararlo en MapScreen, y señaló la falta de la dependencia `isAvailable` en el useEffect del hook. 
+Qué se usó / modificó / descartó: Se reordenó la declaración del estado en MapScreen.js y se inyectó `isAvailable` en el arreglo de dependencias de `useDriverLocation.js`, condicionando la ejecución de `startTracking()` para apagar el GPS exitosamente.
+Archivos y commit: src/screens/MapScreen.js, src/services/useDriverLocation.js (Commit: INSERTAR_AQUI_HASH_CORTO)
+Verificación: El componente compila sin crashes y la suscripción del GPS se destruye correctamente al apagar el interruptor, cumpliendo la regla de optimización de recursos.
+Aprendizaje: Comprendí la importancia del orden de declaración (Temporal Dead Zone) en JavaScript y cómo los parámetros inyectados a un hook deben incluirse en el arreglo de dependencias del useEffect para que reaccione a los cambios.

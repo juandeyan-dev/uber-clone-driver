@@ -4,8 +4,8 @@ import MapView, { Marker } from 'react-native-maps';
 import useDriverLocation from '../services/useDriverLocation';
 
 export default function MapScreen() {
-    const { location } = useDriverLocation();
     const [isAvailable, setIsAvailable] = useState(false);
+    const { location } = useDriverLocation(isAvailable);
 
     return (
         <View>

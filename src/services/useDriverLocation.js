@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import * as Location from 'expo-location';
 
-export default function useDriverLocation() {
+export default function useDriverLocation(isAvailable) {
 
     const [location, setLocation] = useState(null);
 
@@ -24,7 +24,10 @@ export default function useDriverLocation() {
             }
         };
 
-        startTracking();
+        if (isAvailable){
+            startTracking();
+        }
+        
 
         return () => {
             if (subscription){
@@ -35,7 +38,7 @@ export default function useDriverLocation() {
             }
         };
 
-    }, []);
+    }, [isAvailable]);
     
     return { location };
 };
