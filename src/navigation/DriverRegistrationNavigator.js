@@ -8,6 +8,7 @@ import { RegistrationProvider, useRegistration } from '../screens/driverRegistra
 import { TabBarIndicator } from 'react-native-tab-view';
 
 //AI -assisted: see docs/AI_LOG.md #4
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
 const Tab = createMaterialTopTabNavigator();
 

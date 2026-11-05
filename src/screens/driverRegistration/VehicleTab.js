@@ -3,7 +3,8 @@ import { ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, V
 import { useRegistration } from './RegistrationContext';
 
 //AI-assistant: see docs/AI_LOG.md #4
-//aunque sea con ayuda de ia, estoy escribiendo cada linea para entender por mi parte
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+
 export default function VehicleTab() {
     const { form, updateSection } = useRegistration();
     const vehicle = form.vehicle;

@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, useMemo } from 'react';
 
 //AI-assistant: see docs/AI_LOG.md #4
-//aunque sea con ayuda de ia, estoy escribiendo cada linea para entender por mi parte
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+
 const RegistrationContext = createContext(null);
 
 const initialForm = {
