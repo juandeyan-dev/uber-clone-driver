@@ -295,4 +295,4 @@ Commit: afc7f95
 - DocumentsTab: Alinea el nombre del parámetro en la función 'setErrors' con la variable del operador spread para evitar el error 'Property 'previousErrors' doesn't exist'.
 - VehicleTab: Corrige la declaración y asignación de la variable en 'handleChange' para prevenir el fallo 'normalizeValue doesn't exist' al transformar la placa a mayúsculas.
 
-  URL: https://manus.im/share/H1JlQmIwGf9H8760uNOvap
+  URL: https://manus.im/share/H1JlQmIwGf9H8760uNOvap . era manus no runable :v JAJAJAJA perdon
