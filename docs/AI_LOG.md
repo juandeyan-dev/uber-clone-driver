@@ -527,7 +527,7 @@ Commit: afc7f95
   - `src/screens/driverRegistration/PersonalDataTab.js`
   - `src/screens/driverRegistration/RegistrationContext.js`
   - `docs/AI_LOG.md`
-  - Commit: `[COMPLETAR CON EL HASH REAL]`
+  - Commit: `7c0aaa4`
 
 - Verificación: Se comprobó que el calendario no permite seleccionar fechas posteriores a la fecha actual. Se probó una fecha correspondiente a una persona menor de 18 años y se verificó que apareciera el mensaje de error y que el formulario permaneciera incompleto. También se probó una fecha de una persona mayor de 18 años y se verificó que la validación de edad fuera aceptada. Se comprobó que la advertencia relacionada con `onChange` desapareciera después de utilizar `onValueChange` y `onDismiss`.
 
