@@ -429,7 +429,17 @@ Archivos y commit: src/screens/MapScreen.js (Commit: 97b5d61)
 Verificación: El mapa se renderiza ocupando toda la pantalla y la cámara rastrea las actualizaciones de la ubicación del conductor.
 Aprendizaje: Entendí las reglas de herencia de Flexbox en React Native y la diferencia clave entre `initialRegion` y `region` para el seguimiento en tiempo real.
 
-
+### Entrada #6
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar validación de estado "isApproved" para bloquear la disponibilidad del conductor.
+Prompt: "Pero si es buena idea simular el backend? es fácil editarlo cuando necesitemos hacer la verdadera aprobación desde firebase?" (Consulta sobre Mocking de datos).
+Resumen de la respuesta: El Tech Lead explicó los beneficios del "Mocking" para desacoplar el desarrollo frontend del backend. Durante la revisión, detectó un auto-import defectuoso de VS Code (`Color`) que causaba crash, y un problema de Flexbox donde el banner dividía la pantalla a la mitad con el mapa.
+Qué se usó / modificó / descartó: Se agregó un estado simulado `isApproved` en `MapScreen.js`. Se refactorizó la UI usando renderizado condicional con el operador `&&` para mostrar un banner de advertencia rojo y deshabilitar dinámicamente la prop `disabled` del `Switch`. Se eliminó la importación inválida.
+Archivos y commit: src/screens/MapScreen.js (Commit: 511527b)
+Verificación: El conductor no puede cambiar a "Disponible" si `isApproved` es falso, mostrando correctamente la alerta visual sin deformar el mapa.
+Aprendizaje: Comprendí el concepto de Mocking para avanzar sin bloqueos externos, el principio DRY (Don't Repeat Yourself) en componentes condicionales, y cómo evitar estilos generados automáticamente por el IDE.
 
 
 
