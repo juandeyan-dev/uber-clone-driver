@@ -7,12 +7,26 @@ export default function MapScreen() {
     const [isAvailable, setIsAvailable] = useState(false);
     const { location } = useDriverLocation(isAvailable);
 
+    // Valor quemado temporalmente para probar la UI
+    const [isApproved, setIsApproved] = useState(false);    
+
     return (
         <View style={{ flex: 1 }}>
-            <Switch 
-                value={isAvailable} 
-                onValueChange={setIsAvailable}
-            />
+            {!isApproved && (
+                <View style={{ backgroundColor: '#ffebee', padding: 15, alignItems: 'center' }}>
+                    <Text style={{ color: '#c62828', textAlign: 'center', fontWeight: 'bold' }}>
+                        Tu cuenta está pendiente de aprobación. No puedes recibir viajes.
+                    </Text>
+                </View>
+            )}
+            <View style= {{padding: 10, alignItems: 'center'}}>
+                <Switch 
+                    value={isAvailable} 
+                    onValueChange={setIsAvailable}
+                    disabled={!isApproved}
+                />
+            </View>
+            
             {location != null ? (
                 <MapView
                     style={{ flex: 1}}
