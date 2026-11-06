@@ -608,7 +608,7 @@ src/screens/driverRegistration/DocumentsTab.js
 
 docs/AI_LOG.md
 
-Commit: [REEMPLAZAR CON EL HASH REAL]
+Commit: 9c0ef5a
 
 Verificación: Se ejecutó la aplicación con Expo y se confirmó que el selector de fecha se abre correctamente desde los tres campos de documentos. Se probó la selección de la fecha de vencimiento de la licencia, del SOAT y de la revisión técnico-mecánica. Se comprobó que cada fecha se guardara en su campo correspondiente y se mostrara con el formato YYYY-MM-DD. También se comprobó que, después de corregir el import de @react-native-community/datetimepicker, la aplicación volviera a iniciar correctamente sin el error de Metro relacionado con la resolución del módulo. En esta etapa todavía es posible seleccionar fechas anteriores a la fecha actual. Esa restricción queda pendiente para la siguiente tarea.
 
