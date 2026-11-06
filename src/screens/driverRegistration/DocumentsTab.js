@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useRegistration } from './RegistrationContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useRegistration } from '../driverRegistration/RegistrationContext';
 
-// AI-assistant: see docs/AI_LOG.md #4
+// AI-assistant: see docs/AI_LOG.md #4, #10
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
 export default function DocumentsTab() {
@@ -10,6 +11,8 @@ export default function DocumentsTab() {
     const documents = form.documents;
 
     const [errors, setErrors] = useState({});
+
+    const [activeDateField, setActiveDateField] = useState(null);
 
     function handleChange(field, value) {
         updateSection('documents', field, value);
@@ -49,6 +52,52 @@ export default function DocumentsTab() {
         }));
     }
 
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function getDateValue(field) {
+        const storedDate = documents[field];
+
+        if (storedDate) {
+            return new Date(`${storedDate}T12:00:00`)
+        }
+
+        return new Date();
+    }
+
+    function handleExpirationDateChange(event, selectedDate) {
+        setActiveDateField(null);
+
+        if (!selectedDate || !activeDateField) {
+            return;
+        }
+
+        const formattedDate = formatDate(selectedDate);
+
+        handleChange(activeDateField, formattedDate);
+    }
+
+    function renderDatePicker(field){
+        if (activeDateField !== field) {
+            return null;
+        }
+
+        return (
+            <DateTimePicker
+                value={getDateValue(field)}
+                mode="date"
+                display="default"
+                onValueChange={handleExpirationDateChange}
+                onDismiss={() => setActiveDateField(null)}
+            />
+        )
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Documentos y pagos</Text>
@@ -72,14 +121,16 @@ export default function DocumentsTab() {
             </TouchableOpacity>
 
             <Text style={styles.label}>Vencimiento de licencia</Text>
-            <TextInput
-                style={styles.input}
-                value={documents.licenseExpiration}
-                onChangeText={(value) =>
-                    handleChange('licenseExpiration', value)
-                }
-                placeholder="YYYY-MM-DD"
-            />
+            <TouchableOpacity style={styles.dateButton}
+                onPress={() => setActiveDateField('lincenseExpiration')}
+            >
+                <Text style={styles.dateButtonText}>
+                    {documents.licenseExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('lincenseExpiration')}
+
             <ErrorMessage message={errors.licenseExpiration} />
 
             <Text style={styles.label}>Foto del SOAT</Text>
@@ -91,12 +142,16 @@ export default function DocumentsTab() {
             </TouchableOpacity>
 
             <Text style={styles.label}>Vencimiento del SOAT</Text>
-            <TextInput
-                style={styles.input}
-                value={documents.soatExpiration}
-                onChangeText={(value) => handleChange('soatExpiration', value)}
-                placeholder="YYYY-MM-DD"
-            />
+            <TouchableOpacity styles={styles.dateButton}
+                onPress={()=> setActiveDateField('soatExpiration')}
+            >
+                <Text style={styles.dateButtonText}>
+                    {documents.soatExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('soatExpiration')}
+
             <ErrorMessage message={errors.soatExpiration} />
 
             <Text style={styles.label}>Foto de revisión técnico-mecánica</Text>
@@ -112,14 +167,20 @@ export default function DocumentsTab() {
             <Text style={styles.label}>
                 Vencimiento de revisión técnico-mecánica
             </Text>
-            <TextInput
-                style={styles.input}
-                value={documents.technicalReviewExpiration}
-                onChangeText={(value) =>
-                    handleChange('technicalReviewExpiration', value)
+
+            <TouchableOpacity
+                style={styles.dataButton}
+                onPress={() =>
+                    setActiveDateField('technicalReviewExpiration')
                 }
-                placeholder="YYYY-MM-DD"
-            />
+            >
+                <Text style={styles.dataButtonText}>
+                    {documents.technicalReviewExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('technicalReviewExpiration')}
+
             <ErrorMessage message={errors.technicalReviewExpiration} />
 
             <Text style={styles.label}>
@@ -185,6 +246,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         backgroundColor: '#fff',
+    },
+    dateButton:{
+        borderWidth: 1,
+        borderColor: '#bdbdbd',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: '#fff'
+    },
+    dateButtonText:{
+        color: '#333'
     },
     photoButton: {
         borderWidth: 1,

@@ -567,7 +567,54 @@ Aprendizaje: Comprendí la importancia del orden de declaración (Temporal Dead 
 
 - Aprendizaje: Entendí que calcular la edad no consiste únicamente en restar el año de nacimiento al año actual, porque también se debe comprobar si la persona ya cumplió años. También aprendí que la validación visual del campo y la validación general del formulario son responsabilidades distintas: una muestra el error y la otra controla si el botón puede habilitarse.
 
+### Entrada #10
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Integrar selectores de fecha para los vencimientos de la licencia de conducción, el SOAT y la revisión técnico-mecánica.
+- Prompt: "vale siguiente entrada hagamos y completemos el otro punto de la lista, iniciamos desde aca"
+- Prompt adicional: "me salio error total al intentar emular emm mira
+  La imagen muestra una pantalla roja de error de desarrollo con el mensaje `The development server returned response error code: 500`. El error indica `Unable to resolve module .@react-native-community/datetimepicker` en el archivo `src/screens/driverRegistration/DocumentsTab.js`. La librería no se pudo encontrar debido a un problema en el import."
+- Prompt adicional: "funcionando correctamente ahora si"
+- Prompt adicional: "todo correcto, has la entrada 10 ya yo me encargo de cambiarlo"
+- Resumen de la respuesta: Manus revisó el archivo `DocumentsTab.js` y propuso reemplazar los campos de texto manuales de las fechas de vencimiento por selectores nativos utilizando `@react-native-community/datetimepicker`.
+- Se implementó un selector reutilizable para los tres documentos. El campo activo se controla mediante el estado `activeDateField`, lo que permite utilizar un solo componente `DateTimePicker` para seleccionar la fecha de vencimiento de la licencia, el SOAT o la revisión técnico-mecánica. Las fechas seleccionadas se convierten al formato `YYYY-MM-DD` y se guardan mediante `updateSection` en el contexto de registro.
+- Qué se usó / modificó / descartó: Se utilizó la dependencia `@react-native-community/datetimepicker`, instalada previamente con Expo.
+- En `DocumentsTab.js` se agregaron:
+  - El import de `DateTimePicker`.
+  - El estado `activeDateField`.
+  - La función `formatDate`.
+  - La función `getDateValue`.
+  - La función `handleExpirationDateChange`.
+  - La función reutilizable `renderDatePicker`.
+  - Los estilos `dateButton` y `dateButtonText`.
+- Se reemplazaron los campos `TextInput` de:
+  - `licenseExpiration`.
+  - `soatExpiration`.
+  - `technicalReviewExpiration`.
+- Durante la prueba apareció un error de resolución del módulo debido a un punto adicional en el import:
+  ```js
+  .@react-native-community/datetimepicker
 
+El error se corrigió utilizando el nombre correcto del paquete:
+
+@react-native-community/datetimepicker
+
+No se modificó el trabajo correspondiente a Juan. Tampoco se implementó todavía la validación de que las fechas sean posteriores a la fecha actual, porque esa corresponde al siguiente punto de la lista.
+
+Archivos y commit:
+
+src/screens/driverRegistration/DocumentsTab.js
+
+docs/AI_LOG.md
+
+Commit: [REEMPLAZAR CON EL HASH REAL]
+
+Verificación: Se ejecutó la aplicación con Expo y se confirmó que el selector de fecha se abre correctamente desde los tres campos de documentos. Se probó la selección de la fecha de vencimiento de la licencia, del SOAT y de la revisión técnico-mecánica. Se comprobó que cada fecha se guardara en su campo correspondiente y se mostrara con el formato YYYY-MM-DD. También se comprobó que, después de corregir el import de @react-native-community/datetimepicker, la aplicación volviera a iniciar correctamente sin el error de Metro relacionado con la resolución del módulo. En esta etapa todavía es posible seleccionar fechas anteriores a la fecha actual. Esa restricción queda pendiente para la siguiente tarea.
+
+Aprendizaje: Entendí que un solo componente DateTimePicker puede reutilizarse para varios campos si se guarda en el estado cuál campo está activo. También comprendí que las fechas seleccionadas deben convertirse a un formato uniforme antes de almacenarse en el formulario. Además, aprendí que los imports de paquetes deben escribirse exactamente con el nombre del módulo instalado y que un punto adicional puede hacer que Metro interprete incorrectamente la ruta de la dependencia.
+
+Próximo paso: Validar que las fechas de vencimiento de la licencia, el SOAT y la revisión técnico-mecánica sean posteriores a la fecha actual.
 
 
 
