@@ -417,7 +417,17 @@ Aprendizaje: Comprendí la importancia del orden de declaración (Temporal Dead 
 
 - Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
 
-
+### Entrada #5
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Integrar el mapa interactivo (react-native-maps) centrado en la ubicación del conductor.
+Prompt: "import React, { useState, useEffect } from 'react'... <MapView style={{ flex: 1}} initialRegion={{..." (código de integración del mapa).
+Resumen de la respuesta: El Tech Lead validó la extracción de coordenadas pero identificó un error crítico de Flexbox en React Native: el contenedor padre carecía de `flex: 1`, lo que causaría que el mapa colapsara a 0 píxeles. Se recomendó cambiar `initialRegion` por `region` para que la cámara siga al conductor.
+Qué se usó / modificó / descartó: Se reemplazó el texto plano de coordenadas por `<MapView>` y `<Marker>`. Se corrigió el estilo del contenedor principal `<View style={{ flex: 1 }}>`.
+Archivos y commit: src/screens/MapScreen.js (Commit: 97b5d61)
+Verificación: El mapa se renderiza ocupando toda la pantalla y la cámara rastrea las actualizaciones de la ubicación del conductor.
+Aprendizaje: Entendí las reglas de herencia de Flexbox en React Native y la diferencia clave entre `initialRegion` y `region` para el seguimiento en tiempo real.
 
 
 
