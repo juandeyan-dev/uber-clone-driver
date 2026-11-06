@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import useDriverLocation from '../services/useDriverLocation';
+import useTripRequests from '../services/useTripRequests';
 
 export default function MapScreen() {
     const [isAvailable, setIsAvailable] = useState(false);
     const { location } = useDriverLocation(isAvailable);
+    const { incomingRequests } = useTripRequests(isAvailable);
 
     // Valor quemado temporalmente para probar la UI
     const [isApproved, setIsApproved] = useState(false);    
@@ -50,7 +52,30 @@ export default function MapScreen() {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text>Esperando ubicación...</Text>
                 </View>
-            )}          
+            )}   
+
+            {incomingRequests != null && (
+                <View style={{
+                    position: 'absolute', 
+                    bottom: 40, 
+                    left: 20, 
+                    right: 20, 
+                    backgroundColor: 'white', 
+                    padding: 20, 
+                    borderRadius: 15,
+                    elevation: 5, 
+                    shadowColor: '#000',
+                    shadowOpacity: 0.2, 
+                    shadowRadius: 10
+                }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>¡Nuevo Viaje!</Text>
+                    <Text>📍 Origen: {incomingRequests.origin}</Text>
+                    <Text>🏁 Destino: {incomingRequests.destination}</Text>
+                    <Text style={{ marginTop: 10, fontSize: 16, color: 'green', fontWeight: 'bold' }}>
+                        💵 Tarifa estimada: ${incomingRequests.fare}
+                    </Text>
+                </View>
+            )}
         </View>
     );
 
