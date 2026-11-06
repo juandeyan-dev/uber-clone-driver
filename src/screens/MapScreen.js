@@ -8,17 +8,36 @@ export default function MapScreen() {
     const { location } = useDriverLocation(isAvailable);
 
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             <Switch 
                 value={isAvailable} 
                 onValueChange={setIsAvailable}
             />
             {location != null ? (
-                <Text>{location.coords.latitude}, {location.coords.longitude}</Text>
-                ) : (
-                <Text>Esperando ubicación...</Text>
+                <MapView
+                    style={{ flex: 1}}
+                    region={{
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                    }}
+                    showsUserLocation={true}
+                >
+                    <Marker
+                        coordinate={{
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                        }}
+                        title="Ubicación del conductor"
+                    />
+                </MapView>
+            ) : (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>Esperando ubicación...</Text>
+                </View>
             )}          
         </View>
     );
 
-}
+};//Corchete de cierre del componente MapScreen
