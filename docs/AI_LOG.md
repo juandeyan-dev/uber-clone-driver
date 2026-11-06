@@ -417,11 +417,41 @@ Aprendizaje: Comprendí la importancia del orden de declaración (Temporal Dead 
 
 - Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
 
+### Entrada #5
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Integrar el mapa interactivo (react-native-maps) centrado en la ubicación del conductor.
+Prompt: "import React, { useState, useEffect } from 'react'... <MapView style={{ flex: 1}} initialRegion={{..." (código de integración del mapa).
+Resumen de la respuesta: El Tech Lead validó la extracción de coordenadas pero identificó un error crítico de Flexbox en React Native: el contenedor padre carecía de `flex: 1`, lo que causaría que el mapa colapsara a 0 píxeles. Se recomendó cambiar `initialRegion` por `region` para que la cámara siga al conductor.
+Qué se usó / modificó / descartó: Se reemplazó el texto plano de coordenadas por `<MapView>` y `<Marker>`. Se corrigió el estilo del contenedor principal `<View style={{ flex: 1 }}>`.
+Archivos y commit: src/screens/MapScreen.js (Commit: 97b5d61)
+Verificación: El mapa se renderiza ocupando toda la pantalla y la cámara rastrea las actualizaciones de la ubicación del conductor.
+Aprendizaje: Entendí las reglas de herencia de Flexbox en React Native y la diferencia clave entre `initialRegion` y `region` para el seguimiento en tiempo real.
 
+### Entrada #6
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar validación de estado "isApproved" para bloquear la disponibilidad del conductor.
+Prompt: "Pero si es buena idea simular el backend? es fácil editarlo cuando necesitemos hacer la verdadera aprobación desde firebase?" (Consulta sobre Mocking de datos).
+Resumen de la respuesta: El Tech Lead explicó los beneficios del "Mocking" para desacoplar el desarrollo frontend del backend. Durante la revisión, detectó un auto-import defectuoso de VS Code (`Color`) que causaba crash, y un problema de Flexbox donde el banner dividía la pantalla a la mitad con el mapa.
+Qué se usó / modificó / descartó: Se agregó un estado simulado `isApproved` en `MapScreen.js`. Se refactorizó la UI usando renderizado condicional con el operador `&&` para mostrar un banner de advertencia rojo y deshabilitar dinámicamente la prop `disabled` del `Switch`. Se eliminó la importación inválida.
+Archivos y commit: src/screens/MapScreen.js (Commit: 511527b)
+Verificación: El conductor no puede cambiar a "Disponible" si `isApproved` es falso, mostrando correctamente la alerta visual sin deformar el mapa.
+Aprendizaje: Comprendí el concepto de Mocking para avanzar sin bloqueos externos, el principio DRY (Don't Repeat Yourself) en componentes condicionales, y cómo evitar estilos generados automáticamente por el IDE.
 
-
-
-
+### Entrada #7
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Crear el hook `useTripRequests` para escuchar las solicitudes de viajes entrantes.
+Prompt: "import React, { useState, useEffect } from 'react'... export default function useTripRequests(isAvailable) {..." (código del hook con el timeout integrado).
+Resumen de la respuesta: El Tech Lead aprobó la estructura base pero detectó un riesgo de "memory leak" (viajes fantasma) si el conductor se desconectaba antes de cumplirse el temporizador, además de señalar importaciones visuales innecesarias en un archivo lógico.
+Qué se usó / modificó / descartó: Se eliminaron las importaciones de React Native. Se implementó la limpieza del temporizador usando `clearTimeout(timeoutId)` en el return del `useEffect` para destruir procesos pendientes al desmontar o cambiar la disponibilidad.
+Archivos y commit: src/services/useTripRequests.js (Commit: 0710146)
+Verificación: El estado simula correctamente la llegada de un viaje tras 5 segundos de estar disponible, y el temporizador se cancela exitosamente si el conductor se desconecta antes.
+Aprendizaje: Entendí la importancia vital de limpiar procesos asíncronos (como temporizadores o suscripciones) en los Custom Hooks para evitar fugas de memoria y actualizaciones de estado en componentes desmontados.
 
 
 
