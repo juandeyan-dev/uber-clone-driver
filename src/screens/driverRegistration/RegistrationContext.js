@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext, useMemo } from 'react';
+import { isAdult } from '../../utils/isAdult';
+
 
 //AI-assistant: see docs/AI_LOG.md #4
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
@@ -59,7 +61,7 @@ export function RegistrationProvider({ children }) {
             personal.fullName.trim() !== '' &&
             personal.identityNumber.trim() !== '' &&
             personal.phone.trim() !== '' &&
-            personal.birthDate.trim() !== '' &&
+            isAdult(personal.birthDate) &&
             personal.gender.trim() !== '' &&
             personal.email.trim() !== '';
 

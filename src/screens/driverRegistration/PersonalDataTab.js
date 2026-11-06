@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { useRegistration } from './RegistrationContext'; // AI-assistant: see docs/AI_LOG.md #8
+import {isAdult} from '../../utils/isAdult';
 
 // AI-assistant: see docs/AI_LOG.md #4, se agregan modificaciones #8
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
@@ -24,6 +25,14 @@ export default function PersonalDataTab() {
             message = 'Este campo es obligatorio';
         }
 
+        if (
+            field === 'birthDate' &&
+            value.trim() !== '' &&
+            !isAdult(value)
+        ) {
+            message = 'El conductor debe tener al menos 18 años';
+        }
+
         if (field === 'fullName' && value.length > 50) {
             message = 'El nombre completo no puede exceder los 50 caracteres';
         }
@@ -31,7 +40,7 @@ export default function PersonalDataTab() {
         if (
             field === 'fullName' &&
             value.trim() &&
-            !/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/.test(value)
+            !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(value)
         ) {
             message = 'El nombre solo puede tener letras y espacios';
         }
@@ -155,7 +164,8 @@ export default function PersonalDataTab() {
                     mode="date"
                     display="default"
                     maximumDate={new Date()}
-                    onChange={handleBirthDateChange}
+                    onValueChange={handleBirthDateChange}
+                    onDismiss={() => setShowBirthDatePicker(false)}
                 />
             )}
 

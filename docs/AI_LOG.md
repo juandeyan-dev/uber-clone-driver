@@ -383,6 +383,155 @@ Commit: afc7f95
 
 - Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
 
+### Entrada #8
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Verificar la versión de Expo e integrar un selector real para la fecha de nacimiento en el formulario de datos personales del conductor.
+
+- Prompt: 
+
+  "Verifiquemos la versión de Expo en package.json para elegir el selector de fechas adecuado."
+
+  "recuerda tener eso en cuenta para la siguiente entrada #"
+
+  "PS D:\Dev\5SEMESTRE\desarollo movil\uber-clone-driver> Get-Content package.json
+
+  {
+    "name": "uber-clone-driver",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+      "@react-navigation/material-top-tabs": "^7.8.1",
+      "@react-navigation/native": "^7.5.1",
+      "@react-navigation/stack": "^7.12.1",
+      "expo": "~57.0.31",
+      "expo-status-bar": "~57.0.1",
+      "react": "19.2.3",
+      "react-native": "0.86.3",
+      "react-native-gesture-handler": "~2.32.0",
+      "react-native-pager-view": "8.0.2",
+      "react-native-safe-area-context": "~5.7.0",
+      "react-native-screens": "~4.26.0",
+      "react-native-tab-view": "^4.3.4"
+    },
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    },
+    "private": true
+  }
+
+  PS D:\Dev\5SEMESTRE\desarollo movil\uber-clone-driver> npx expo install @react-native-community/datetimepicker
+
+  › Installing 1 SDK 57.0.0 compatible native module using npm
+  > npm install
+
+  added 1 package, and audited 497 packages in 8s
+
+  47 packages are looking for funding
+    run `npm fund` for details
+
+  10 vulnerabilities (1 low, 7 moderate, 2 high)
+
+  To address issues that do not require attention, run:
+    npm audit fix
+
+  To address all issues (including breaking changes), run:
+    npm audit fix --force
+
+  Run `npm audit` for details.
+  › Added config plugin: @react-native-community/datetimepicker
+
+  esto salio, y ten en cuenta los promts para que no piensen que me los invento aunque ya ni se si leera tanto jajaaja"
+
+  "si salieron esos archivos modificados unicamente, sigamos"
+
+  "puse 5555555 en la parte de fecha de nacimiento y no paso nada"
+
+  "me salio un error al emular mira
+
+  Render Error: Property 'errors' doesn't exist
+
+  En PersonalDataTab.js se intentaba utilizar errors en el componente ErrorMessage, pero errors no estaba declarado correctamente."
+
+  "perfecto ahora si funciona lo de fecha"
+
+- Resumen de la respuesta: Se verificó que el proyecto utiliza Expo SDK 57, específicamente `expo: ~57.0.31`, junto con React 19.2.3 y React Native 0.86.3. Se recomendó instalar `@react-native-community/datetimepicker` mediante `npx expo install` para obtener una versión compatible con el SDK.
+
+  Después se integró el selector de fecha en `PersonalDataTab.js`. La fecha seleccionada se formatea como `YYYY-MM-DD` y se guarda en el estado compartido del formulario. Durante la prueba apareció el error `Property 'errors' doesn't exist`, que se corrigió declarando el estado local `errors` dentro de `PersonalDataTab`.
+
+- Qué se usó / modificó / descartó: Se utilizó `@react-native-community/datetimepicker` para reemplazar el campo de texto manual de fecha de nacimiento. Se agregaron `formatDate`, `handleBirthDateChange`, el estado `showBirthDatePicker` y los estilos del botón de fecha.
+
+  También se agregó el plugin de configuración de `@react-native-community/datetimepicker` en `app.json`. Se corrigió el estado local `errors` sin trasladarlo al contexto global, porque los mensajes de validación pertenecen a cada pestaña del formulario.
+
+  No se implementó todavía la validación de mayoría de edad; esa corresponde a la siguiente tarea. Tampoco se ejecutó `npm audit fix --force`, porque podía introducir actualizaciones incompatibles y no era necesario para esta funcionalidad.
+
+- Archivos y commit: 
+
+  - `app.json`
+  - `package.json`
+  - `package-lock.json`
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `docs/AI_LOG.md`
+  - Commit: `3a52325`
+
+- Verificación: Se confirmó la versión `expo: ~57.0.31` en `package.json`. La dependencia se instaló correctamente mediante `npx expo install @react-native-community/datetimepicker`, y Expo agregó el plugin correspondiente.
+
+  En la aplicación se comprobó que el botón de selección abriera el calendario nativo, que la fecha escogida se mostrara en formato `YYYY-MM-DD` y que la aplicación dejara de mostrar el error relacionado con la variable `errors`.
+
+  También se verificó que una entrada manual como `5555555` no modificara el campo, porque el control ya no es un `TextInput`, sino un selector de fecha. El commit se publicó en la rama `stiven` mediante `git push`.
+
+- Aprendizaje: Entendí que las dependencias nativas de Expo deben instalarse con `npx expo install` para conservar la compatibilidad con el SDK del proyecto. También comprendí que un selector de fecha debe guardar un valor normalizado y que el estado local `errors` debe declararse antes de utilizarlo en los mensajes de validación.
+
+- Próximo paso: Validar que la fecha de nacimiento seleccionada corresponda a una persona mayor o igual a 18 años.
+
+### Entrada #9
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar la validación de edad mínima de 18 años para el registro del conductor y conectar esa validación con el estado general del formulario.
+
+- Prompt: 
+
+  "vale, siguiente entrada # vamos con la verificacion de la edad minima"
+
+  "el boton nisiquiera se habilida porque no se ah modificado eso aun y el calendario si se limita hasta la fecha actual porcierto la consola lanzo esto
+
+  N DateTimePicker: `onChange` is deprecated. Use `onValueChange`, `onDismiss`, and `onNeutralButtonPress` instead."
+
+  "todo eso existe, se te olvida que debes revisar el git cada momento? ademas como dices que no existe si lo creamos juntos sea serio"
+
+  "On branch stiven
+  Your branch is up to date with 'origin/stiven'.
+
+  Changes not staged for commit:
+  modified: docs/AI_LOG.md
+  modified: src/screens/driverRegistration/PersonalDataTab.js
+  modified: src/screens/driverRegistration/RegistrationContext.js
+
+  Untracked files:
+  src/utils/isAdult.js"
+
+- Resumen de la respuesta: Manus explicó que la validación de edad debía conectarse tanto a `PersonalDataTab.js`, para mostrar el error debajo de la fecha, como a `RegistrationContext.js`, para impedir que el formulario se considerara completo cuando el conductor fuera menor de edad. También se indicó reemplazar la prop depreciada `onChange` de `DateTimePicker` por `onValueChange` y `onDismiss`.
+
+- Qué se usó / modificó / descartó: Se creó `src/utils/isAdult.js` como función reutilizable para calcular correctamente la edad, considerando si la persona ya cumplió años durante el año actual. Se utilizó esta función en `PersonalDataTab.js` y `RegistrationContext.js`. También se mantuvo la restricción `maximumDate={new Date()}` del selector y se reemplazó el callback depreciado `onChange` por `onValueChange` y `onDismiss`. No se modificó el contexto de Juan ni ninguna funcionalidad de mapa, GPS, viajes o pagos.
+
+- Archivos y commit:
+
+  - `src/utils/isAdult.js`
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `[COMPLETAR CON EL HASH REAL]`
+
+- Verificación: Se comprobó que el calendario no permite seleccionar fechas posteriores a la fecha actual. Se probó una fecha correspondiente a una persona menor de 18 años y se verificó que apareciera el mensaje de error y que el formulario permaneciera incompleto. También se probó una fecha de una persona mayor de 18 años y se verificó que la validación de edad fuera aceptada. Se comprobó que la advertencia relacionada con `onChange` desapareciera después de utilizar `onValueChange` y `onDismiss`.
+
+- Aprendizaje: Entendí que calcular la edad no consiste únicamente en restar el año de nacimiento al año actual, porque también se debe comprobar si la persona ya cumplió años. También aprendí que la validación visual del campo y la validación general del formulario son responsabilidades distintas: una muestra el error y la otra controla si el botón puede habilitarse.
 
 
 
