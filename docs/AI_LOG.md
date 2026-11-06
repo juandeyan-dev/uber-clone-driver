@@ -461,7 +461,7 @@ Objetivo: Renderizar la tarjeta de la solicitud entrante superpuesta al mapa de 
 Prompt: "import React, { useState, useEffect } from 'react'... {incomingRequests != null && (..." (código de integración condicional en la UI).
 Resumen de la respuesta: El Tech Lead validó el uso correcto de `position: 'absolute'` y `z-index` implícito para superponer la UI sobre el mapa, pero detectó un error de sintaxis crítico por la falta de una etiqueta de cierre de JSX (`</View>`).
 Qué se usó / modificó / descartó: Se integró el hook `useTripRequests` en `MapScreen.js`. Se construyó una tarjeta flotante utilizando renderizado condicional dependiente del estado `incomingRequests`, corrigiendo el cierre de etiquetas JSX para evitar fallos de compilación.
-Archivos y commit: src/screens/MapScreen.js (Commit: INSERTAR_AQUI_HASH_CORTO)
+Archivos y commit: src/screens/MapScreen.js (Commit: edd90b3)
 Verificación: Al activar la disponibilidad, la tarjeta blanca con los datos del viaje (origen, destino, tarifa) aparece flotando sobre la parte inferior del mapa tras 5 segundos.
 Aprendizaje: Reforcé el uso de posicionamiento absoluto en React Native para superposición de interfaces y la importancia de la estructura estricta de cierre de etiquetas en JSX.
 
