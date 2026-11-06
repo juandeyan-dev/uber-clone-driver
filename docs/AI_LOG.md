@@ -441,7 +441,17 @@ Archivos y commit: src/screens/MapScreen.js (Commit: 511527b)
 Verificación: El conductor no puede cambiar a "Disponible" si `isApproved` es falso, mostrando correctamente la alerta visual sin deformar el mapa.
 Aprendizaje: Comprendí el concepto de Mocking para avanzar sin bloqueos externos, el principio DRY (Don't Repeat Yourself) en componentes condicionales, y cómo evitar estilos generados automáticamente por el IDE.
 
-
+### Entrada #7
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Crear el hook `useTripRequests` para escuchar las solicitudes de viajes entrantes.
+Prompt: "import React, { useState, useEffect } from 'react'... export default function useTripRequests(isAvailable) {..." (código del hook con el timeout integrado).
+Resumen de la respuesta: El Tech Lead aprobó la estructura base pero detectó un riesgo de "memory leak" (viajes fantasma) si el conductor se desconectaba antes de cumplirse el temporizador, además de señalar importaciones visuales innecesarias en un archivo lógico.
+Qué se usó / modificó / descartó: Se eliminaron las importaciones de React Native. Se implementó la limpieza del temporizador usando `clearTimeout(timeoutId)` en el return del `useEffect` para destruir procesos pendientes al desmontar o cambiar la disponibilidad.
+Archivos y commit: src/services/useTripRequests.js (Commit: 0710146)
+Verificación: El estado simula correctamente la llegada de un viaje tras 5 segundos de estar disponible, y el temporizador se cancela exitosamente si el conductor se desconecta antes.
+Aprendizaje: Entendí la importancia vital de limpiar procesos asíncronos (como temporizadores o suscripciones) en los Custom Hooks para evitar fugas de memoria y actualizaciones de estado en componentes desmontados.
 
 
 
