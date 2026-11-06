@@ -1,0 +1,19 @@
+* [33m69b593d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mstiven[m[33m)[m actualizacion del commit en ai_log
+* [33m7c0aaa4[m[33m ([m[1;31morigin/stiven[m[33m)[m implementar isAdult y conectar validación de edad al contexto de registro
+[31m|[m *   [33mecda621[m[33m ([m[1;31morigin/develop[m[33m)[m Merge pull request #2 from juandeyan-dev/juandeyan
+[31m|[m [32m|[m[33m\[m  
+[31m|[m [32m|[m *   [33mfc002ad[m[33m ([m[1;31morigin/juandeyan[m[33m)[m Merge branch 'develop' into juandeyan
+[31m|[m [32m|[m [34m|[m[32m\[m  
+[31m|[m [32m|[m [34m|[m[32m/[m  
+[31m|[m [32m|[m[32m/[m[34m|[m   
+[31m|[m * [34m|[m   [33mf9efc73[m Merge pull request #1 from juandeyan-dev/stiven
+[31m|[m [36m|[m[31m\[m [34m\[m  
+[31m|[m [36m|[m[31m/[m [34m/[m  
+[31m|[m[31m/[m[36m|[m [34m|[m   
+* [36m|[m [34m|[m [33m3a52325[m integrar selector de fecha de nacimiento y corregir estado de errores en PersonalDataTab
+* [36m|[m [34m|[m [33m4f0cf3c[m implementar función pura calculateFare para cálculo de tarifas y ganancias
+* [36m|[m [34m|[m [33m39d9302[m agregar archivo pricing.js con constantes de tarifas y multiplicadores
+* [36m|[m [34m|[m [33mcaa35a5[m era manus no runable :v JAJAJAJA perdon
+* [36m|[m [34m|[m [33mf3bb39c[m link de runable
+* [36m|[m [34m|[m [33m63d3c87[m resolver errores de runtime en validaciones de documentos y vehículo | errores que daban errores en la emulacion y ejecucion
+* [36m|[m [34m|[m [33m1e70243[m integrar DriverRegistrationNavigator en el Stack.Navigator principal
