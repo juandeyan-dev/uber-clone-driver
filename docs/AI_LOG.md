@@ -473,7 +473,7 @@ Objetivo: Implementar temporizador regresivo, botones de acción (Aceptar/Rechaz
 Prompt: "Pues tiene que ser implementado los botones debajo de la targeta de solicitud... y lo de los 15 segundos no es parecido a esto?" (Consulta sobre temporizadores).
 Resumen de la respuesta: El Tech Lead diferenció el uso de `setTimeout` (una vez) vs `setInterval` (repetitivo). Se instruyó mover toda la lógica del reloj al hook para mantener la vista limpia, e implementar `useNavigation` para la transición de pantallas.
 Qué se usó / modificó / descartó: Se actualizó `useTripRequests` agregando `setInterval` para un conteo de 15 a 0, limpiándolo en el ciclo de desmontaje. En `MapScreen.js` se agregaron botones interactivos con `TouchableOpacity` y la función `acceptTrip` que transfiere el estado del viaje a `'ActiveTrip'` mediante `react-navigation`.
-Archivos y commit: src/services/useTripRequests.js, src/screens/MapScreen.js (Commit: INSERTAR_AQUI_HASH_CORTO)
+Archivos y commit: src/services/useTripRequests.js, src/screens/MapScreen.js (Commit: 782d516)
 Verificación: El temporizador baja visualmente cada segundo; al llegar a cero o presionar "Rechazar", la tarjeta se limpia. Al presionar "Aceptar", se ejecuta la función de navegación con los parámetros.
 Aprendizaje: Comprendí la diferencia entre temporizadores en JavaScript (`setTimeout` vs `setInterval`) dentro del ciclo de vida de React, y cómo pasar parámetros de estado entre pantallas mediante rutas.
 
