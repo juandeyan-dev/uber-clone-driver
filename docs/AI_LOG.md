@@ -465,6 +465,17 @@ Archivos y commit: src/screens/MapScreen.js (Commit: edd90b3)
 Verificación: Al activar la disponibilidad, la tarjeta blanca con los datos del viaje (origen, destino, tarifa) aparece flotando sobre la parte inferior del mapa tras 5 segundos.
 Aprendizaje: Reforcé el uso de posicionamiento absoluto en React Native para superposición de interfaces y la importancia de la estructura estricta de cierre de etiquetas en JSX.
 
+### Entrada #9
+Fecha: 2026-11-09
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar temporizador regresivo, botones de acción (Aceptar/Rechazar) y navegación a la pantalla de viaje.
+Prompt: "Pues tiene que ser implementado los botones debajo de la targeta de solicitud... y lo de los 15 segundos no es parecido a esto?" (Consulta sobre temporizadores).
+Resumen de la respuesta: El Tech Lead diferenció el uso de `setTimeout` (una vez) vs `setInterval` (repetitivo). Se instruyó mover toda la lógica del reloj al hook para mantener la vista limpia, e implementar `useNavigation` para la transición de pantallas.
+Qué se usó / modificó / descartó: Se actualizó `useTripRequests` agregando `setInterval` para un conteo de 15 a 0, limpiándolo en el ciclo de desmontaje. En `MapScreen.js` se agregaron botones interactivos con `TouchableOpacity` y la función `acceptTrip` que transfiere el estado del viaje a `'ActiveTrip'` mediante `react-navigation`.
+Archivos y commit: src/services/useTripRequests.js, src/screens/MapScreen.js (Commit: INSERTAR_AQUI_HASH_CORTO)
+Verificación: El temporizador baja visualmente cada segundo; al llegar a cero o presionar "Rechazar", la tarjeta se limpia. Al presionar "Aceptar", se ejecuta la función de navegación con los parámetros.
+Aprendizaje: Comprendí la diferencia entre temporizadores en JavaScript (`setTimeout` vs `setInterval`) dentro del ciclo de vida de React, y cómo pasar parámetros de estado entre pantallas mediante rutas.
 
 
 

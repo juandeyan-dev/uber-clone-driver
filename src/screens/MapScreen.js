@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch } from 'react-native';
+import { View, Text, Switch, TouchableOpacity } from 'react-native';
+import  {useNavigation} from '@react-navigation/native';
+
+
 import MapView, { Marker } from 'react-native-maps';
 import useDriverLocation from '../services/useDriverLocation';
 import useTripRequests from '../services/useTripRequests';
@@ -7,10 +10,20 @@ import useTripRequests from '../services/useTripRequests';
 export default function MapScreen() {
     const [isAvailable, setIsAvailable] = useState(false);
     const { location } = useDriverLocation(isAvailable);
-    const { incomingRequests } = useTripRequests(isAvailable);
+    const { incomingRequests, timeLeft, rejectRequest } = useTripRequests(isAvailable);
 
     // Valor quemado temporalmente para probar la UI
-    const [isApproved, setIsApproved] = useState(false);    
+    const [isApproved, setIsApproved] = useState(false);   
+    const navigation = useNavigation(); 
+
+    //Funciones 
+    const acceptTrip = () => {
+        // Lógica para aceptar el viaje
+        const acceptedTripData = incomingRequests;
+        rejectRequest(); 
+        navigation.navigate('ActiveTrip', {trip: acceptedTripData});
+
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -74,6 +87,22 @@ export default function MapScreen() {
                     <Text style={{ marginTop: 10, fontSize: 16, color: 'green', fontWeight: 'bold' }}>
                         💵 Tarifa estimada: ${incomingRequests.fare}
                     </Text>
+                    <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold', color: '#c62828', marginTop: 10 }}>
+                        ⏳ {timeLeft}s
+                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
+                        <TouchableOpacity 
+                            onPress={acceptTrip}
+                            style={{ backgroundColor: '#2e7d32', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8 }}>
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Aceptar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            onPress={rejectRequest} 
+                            style={{ backgroundColor: '#c62828', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8 }}
+                        >
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Rechazar</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )}
         </View>
