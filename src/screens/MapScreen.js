@@ -13,7 +13,7 @@ export default function MapScreen() {
     const { incomingRequests, timeLeft, rejectRequest } = useTripRequests(isAvailable);
 
     // Valor quemado temporalmente para probar la UI
-    const [isApproved, setIsApproved] = useState(false);   
+    const [isApproved, setIsApproved] = useState(true);   
     const navigation = useNavigation(); 
 
     //Funciones 
