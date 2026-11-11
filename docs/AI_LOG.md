@@ -477,7 +477,17 @@ Archivos y commit: src/services/useTripRequests.js, src/screens/MapScreen.js (Co
 Verificación: El temporizador baja visualmente cada segundo; al llegar a cero o presionar "Rechazar", la tarjeta se limpia. Al presionar "Aceptar", se ejecuta la función de navegación con los parámetros.
 Aprendizaje: Comprendí la diferencia entre temporizadores en JavaScript (`setTimeout` vs `setInterval`) dentro del ciclo de vida de React, y cómo pasar parámetros de estado entre pantallas mediante rutas.
 
-
+### Entrada #10
+Fecha: 2026-11-11
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Crear pantalla de Viaje en Curso (ActiveTripScreen) y configurar el enrutador principal en App.js.
+Prompt: "La verdad no veo ningún MainNavigator... (compartiendo código de App.js)".
+Resumen de la respuesta: El Tech Lead aclaró que `App.js` funciona como el enrutador principal del proyecto. Se corrigió un error de arquitectura donde se había anidado la pantalla operativa dentro de los tabs de registro, indicando cómo registrar las rutas a nivel raíz.
+Qué se usó / modificó / descartó: Se creó `src/screens/ActiveTripScreen.js` configurado para recibir y renderizar `route.params.trip`. Se revirtió la modificación en el archivo de Stiven (`DriverRegistrationNavigator`). Se modificó `App.js` para registrar `MapScreen` y `ActiveTripScreen` en el `Stack.Navigator`, asignando el mapa como `initialRouteName`.
+Archivos y commit: App.js, src/screens/ActiveTripScreen.js, src/navigation/DriverRegistrationNavigator.js (Commit: f7bc4a3)
+Verificación: El flujo de navegación funciona: al presionar "Aceptar" en la tarjeta del mapa, el sistema navega a pantalla completa hacia "Viaje en Curso", inyectando y renderizando origen, destino y tarifa correctamente.
+Aprendizaje: Comprendí la diferencia arquitectónica entre Stack Navigators y Tab Navigators, y cómo evitar acoplar flujos operativos (viajes) con flujos administrativos (registros).
 
 
 
