@@ -1,4 +1,4 @@
-// AI-assisted: see docs/AI_LOG.md #15
+// AI-assisted: see docs/AI_LOG.md #15 & #16
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 // Contexto global del conductor: gestiona sesión, persistencia del driverId y escucha en tiempo real de isApproved en Firestore.
 
@@ -25,6 +25,7 @@ export function DriverProvider({ children }) {
     // Memoria local de ganancias y viajes completados
     const [earnings, setEarnings] = useState(0);
     const [completedTrips, setCompletedTrips] = useState(0);
+    const [user, setUser] = useState(null); 
 
     // Estados de sesión, perfil y sincronización con Firestore
     const [driverId, setDriverId] = useState(null);
@@ -35,7 +36,7 @@ export function DriverProvider({ children }) {
 
     // Finaliza un viaje activo, suma ganancias y marca al conductor como disponible de nuevo
     const finishTrip = (fare) => {
-        setEarnings((previousEarnings) => previousEarnings + fare);
+        setEarnings((previousEarnings) => previousEarnings + Number(fare));
         setCompletedTrips((previousTrips) => previousTrips + 1);
         setIsAvailable(true);
     };
@@ -146,6 +147,8 @@ export function DriverProvider({ children }) {
                 sessionError,
                 startDriverSession,
                 logoutDriver,
+                user,
+                setUser,
             }}
         >
             {children}

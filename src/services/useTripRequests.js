@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #13
 import React, { useState, useEffect } from 'react';
 
 export default function useTripRequests(isAvailable) {
@@ -6,26 +7,28 @@ export default function useTripRequests(isAvailable) {
 
     useEffect(() => {
         let timeoutId;
-        if (isAvailable) {
+        // Se dispara si estás conectado Y no tienes una solicitud activa en pantalla
+        if (isAvailable && !incomingRequests) {
             timeoutId = setTimeout(() => {
                 const mockRequest = {
-                    id: 'trip_123',
+                    id: 'trip_' + Date.now(),
                     origin: 'Terminal del Norte',
-                    originCoords: { latitude: 6.2753, longitude: -75.5694 },
+                    originCoords: { latitude: 6.2778, longitude: -75.5712 },
                     destination: 'Parque Lleras',
                     destinationCoords: { latitude: 6.2088, longitude: -75.5677 },
                     fare: 15000
                 };
                 setIncomingRequests(mockRequest);
             }, 5000);
-        } else {
+        } else if (!isAvailable) {
+            // Solo limpia la solicitud si tú apagas el interruptor de disponibilidad
             setIncomingRequests(null);
         }
 
         return () => {
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [isAvailable]);
+    }, [isAvailable, incomingRequests]); // <-- Aquí vigilamos ambos estados
 
     useEffect(() => {
         let timerId;

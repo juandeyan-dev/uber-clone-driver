@@ -500,6 +500,48 @@ Qué se usó / modificó / descartó: Se creó la bóveda global DriverContext.j
 Archivos y commit: src/context/DriverContext.js, App.js, src/screens/ActiveTripScreen.js, src/screens/MapScreen.js (Commit: 80b53b8)
 Verificación: El estado del switch (disponibilidad) sobrevive al navegar entre pantallas. Al presionar "Finalizar viaje", la navegación retorna silenciosamente al mapa y el badge flotante se actualiza reflejando la suma de la tarifa de la carrera.
 Aprendizaje: Comprendí las Reglas estrictas de los Hooks en React (jamás declararlos después de un return condicional), el uso de Context API para evitar la pérdida de estados locales al desmontar pantallas, y cómo las restricciones de hardware/servicios de Google afectan el renderizado en dispositivos físicos.
+
+### Entrada #12
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Reorganizar la interfaz de MapScreen para evitar colisiones visuales y migrar el motor de mapas a OpenStreetMap (WebView) para evadir bloqueos de renderizado por facturación en Google Cloud.
+Prompt: "Bueno, lo que necesito antes de seguir hablando de lo de API, necesito arreglar lo del coso flotante de ganancias... Listo, mostré los tres estados, ni en el pc emula... por el momento no implementaré lo que me diste arriba, voy a intentar que mi compañero saque la API de google maps... Dame porfa otra vez esos códigos..."
+Resumen de la respuesta: Se rediseñó la UI de MapScreen anclando el interruptor de disponibilidad en la parte inferior y dejando el indicador de ganancias libre en la parte superior. Ante el fallo de renderizado de react-native-maps tanto en emulador como en dispositivo físico sin API Key facturable, se implementó un componente alternativo usando OpenStreetMap y Leaflet incrustados en un WebView, respaldado por la autorización docente para simular datos externos.
+Qué se usó / modificó / descartó: Se descartó el uso de react-native-maps y la facturación de Google Cloud. Se instaló react-native-webview. Se creó el componente src/components/FreeMap.js con renderizado HTML/JS de Leaflet. Se modificaron src/screens/MapScreen.js y src/screens/ActiveTripScreen.js para integrar FreeMap, corregir el nombre de ruta en navigation.navigate('ActiveTrip') y reacomodar los controles flotantes.
+Archivos y commit: package.json, src/components/FreeMap.js, src/screens/MapScreen.js, src/screens/ActiveTripScreen.js (Commit: f389f9d)
+Verificación: Probado en dispositivo físico (Samsung Galaxy S23 Ultra) mediante Expo Go con túnel. El mapa de Medellín carga con calles reales, el marcador GPS ubica al conductor sin obstruir el badge de ganancias, y la pantalla ActiveTripScreen traza la línea de ruta entre origen y destino recorriendo los tres estados del viaje hasta sumar la tarifa.
+Aprendizaje: Comprendí cómo desacoplar dependencias propietarias de mapas mediante componentes WebView con librerías Open Source (Leaflet/OpenStreetMap) para eliminar costos de infraestructura en prototipos, además de estructurar layouts absolutos en React Native evitando superposición de controles.
+
+### Entrada #13
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar trazado de rutas reales sobre la malla vial mediante OSRM según el estado del viaje, habilitar el ciclo continuo de solicitudes tras rechazar y corregir el desfase de coordenadas del emulador.
+Prompt: "Ahora, lo que quiero hacer es, será que podemos hacer que no lance una linea derecha de terminal del norte a lleras?... la ubicación de terminal del norte, no lanza exactamente en la terminal del norte... cuando le doy a rechazar a carrera, no me vuelve a lanzar la carrera... Ahora cuando le acepto la carrera, no me lanza mi dirección, hacia el punto de recogida, me sale es esto que te mandé en la foto..."
+Resumen de la respuesta: Se integró la API pública de OSRM dentro de FreeMap para dibujar rutas reales siguiendo las calles en lugar de líneas rectas, alternando dinámicamente los puntos entre Conductor -> Origen y Origen -> Destino según tripStatus. Se ajustaron las dependencias de useTripRequests para relanzar viajes cada 5 segundos al rechazar, se precisaron las coordenadas de la Terminal del Norte y se añadió un fallback en ActiveTripScreen para evitar que el GPS por defecto del emulador (California) rompiera el cálculo de la ruta en Medellín.
+Qué se usó / modificó / descartó: Se descartó el trazado en línea recta (L.polyline simple). Se modificó src/components/FreeMap.js para consumir router.project-osrm.org y renderizar GeoJSON. Se modificó src/services/useTripRequests.js ajustando originCoords (6.2778, -75.5712) y agregando incomingRequests al arreglo de dependencias del useEffect. Se modificó src/screens/ActiveTripScreen.js para inyectar coordenadas seguras de respaldo en Robledo si el GPS marca fuera de Colombia.
+Archivos y commit: src/components/FreeMap.js, src/screens/ActiveTripScreen.js, src/services/useTripRequests.js (Commit: 1aac246)
+Verificación: Probado en emulador Pixel 7 y dispositivo físico. Al rechazar una solicitud, llega otra automáticamente a los 5 segundos. Al aceptar, la ruta azul serpentea por las calles desde Robledo hasta la bahía de la Terminal del Norte y, al iniciar el viaje, recalcula la ruta vial hasta el Parque Lleras.
+Aprendizaje: Comprendí cómo consumir APIs geoespaciales gratuitas (OSRM) para enrutamiento real sin depender de Google Directions, cómo controlar ciclos de vida en React mediante arreglos de dependencias en useEffect, y la importancia de validar coordenadas GPS contra valores por defecto de entornos emulados.
+
+### Entrada #14
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Diseñar e implementar las pantallas de inicio de sesión (Login) y registro (Register) con validación inline de errores (sin usar Alert, cumpliendo rúbrica) y extender el DriverContext para gestionar la sesión del usuario.
+Prompt: "Si, implementemos lo de DriverContext, pero lo de firebase no lo agregaré, ya que stiven probablemente ya tenga este archivo... quiero aplicar lo de los errores sin Alert..."
+Resumen de la respuesta: Se construyeron los componentes LoginScreen y RegisterScreen integrando validaciones locales por campo con mensajes de error en texto rojo bajo cada input, acatando la restricción de la rúbrica del proyecto sobre prohibir componentes Alert en formularios. Se actualizó DriverContext para incluir la variable de usuario (`user`), preparando la integración con la autenticación centralizada de Firebase que lidera el compañero del equipo.
+Qué se usó / modificó / descartó: Se descartó el uso de Alert nativo para notificar campos vacíos o credenciales incorrectas. Se crearon los estados de error individuales (`emailError`, `passwordError`, `nameError`) en src/screens/LoginScreen.js y src/screens/RegisterScreen.js. Se modificó src/context/DriverContext.js para añadir el estado global `user` y su función setter para el control de sesión.
+Archivos y commit: src/screens/LoginScreen.js, src/screens/RegisterScreen.js, src/context/DriverContext.js (Commit: fda21de)
+Verificación: Probado localmente en la interfaz. Al intentar enviar formularios vacíos o con datos erróneos, los inputs se marcan con borde rojo y despliegan los textos descriptivos de error debajo de cada uno de manera reactiva, sin interrumpir el flujo visual con pop-ups.
+Aprendizaje: Comprendí cómo estructurar validaciones de formularios UI/UX con mensajes inline personalizados en React Native, manteniendo el cumplimiento estricto de las reglas de diseño académicas y preparando estados globales escalables para la autenticación basada en tokens.
+
+
+
+
+
+
 ### Entrada #8
 
 - Fecha: 2026-11-05
