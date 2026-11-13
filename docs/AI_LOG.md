@@ -956,7 +956,7 @@ Próximo paso: Continuar con el siguiente bloque de validaciones del formulario 
   - `src/services/driverService.js`
   - `src/navigation/DriverRegistrationNavigator.js`
   - `docs/AI_LOG.md`
-  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+  - Commit: `c69fe80`
 
 - Verificación: Se ejecutó:
 
@@ -992,8 +992,6 @@ También comprendí la importancia de separar responsabilidades: Firebase inicia
 Estado del bloque: Integración de Firebase, Firestore y Cloudinary completada y probada correctamente.
 
 Próximo paso: Implementar la lectura del perfil y el bloqueo persistente del acceso al mapa y a la disponibilidad cuando isApproved !== true.
-
-
 
 
 
