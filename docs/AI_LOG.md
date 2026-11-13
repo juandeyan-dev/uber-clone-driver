@@ -993,6 +993,87 @@ Estado del bloque: Integración de Firebase, Firestore y Cloudinary completada y
 
 Próximo paso: Implementar la lectura del perfil y el bloqueo persistente del acceso al mapa y a la disponibilidad cuando isApproved !== true.
 
+### Entrada #15
 
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar la persistencia del identificador del conductor con AsyncStorage, leer el perfil desde Firestore en tiempo real y bloquear el acceso al mapa y a la disponibilidad mientras `isApproved !== true`.
+
+- Prompt: "Ya confirmé localmente que estoy en la rama stiven, el árbol está limpio y todo el código de la Entrada #14 está subido en GitHub. Avancemos con la implementación de la Entrada #15: instalar AsyncStorage, guardar y leer el driverId, suscribirnos en tiempo real al documento drivers/{driverId} con onSnapshot y bloquear el acceso al mapa hasta que isApproved sea true."
+
+- Prompts adicionales:
+
+  - "Dime el comando exacto para instalar @react-native-async-storage/async-storage con Expo."
+  - "Dame el código exacto para actualizar src/services/driverService.js, conservando los comentarios y el estilo existente."
+  - "¿Qué contexto y pantalla de navegación debemos modificar para bloquear el acceso al mapa mientras isApproved !== true?"
+  - "Varias partes del código ya tienen comentarios hechos por mí. Mantenlos, sigue el estilo que tienen dentro de Git y adapta lo que me des."
+
+- Resumen de la respuesta: Manus explicó cómo instalar AsyncStorage mediante `npx expo install @react-native-async-storage/async-storage` y propuso ampliar `driverService.js` para guardar, recuperar y eliminar el `driverId` de la sesión.
+
+  También se propuso utilizar `onSnapshot` de Firebase para escuchar en tiempo real el documento `drivers/{driverId}`. De esta forma, la aplicación puede detectar cuando el administrador cambia el campo `isApproved` de `false` a `true` sin depender de reiniciar la aplicación.
+
+  Se propuso ampliar `DriverContext.js` para centralizar el `driverId`, el perfil del conductor, el estado de carga, los errores y el estado de aprobación. El contexto debe activar la disponibilidad únicamente cuando el perfil exista y `isApproved === true`.
+
+  Para proteger el acceso operativo, se propuso modificar `App.js` y colocar una pantalla de carga, una pantalla de registro, `PendingApprovalScreen` o la navegación del mapa según el estado de la sesión. De esta manera, `MapScreen` no se monta mientras el perfil está pendiente de aprobación.
+
+  La implementación se adaptó al estilo existente del repositorio y se conservaron los comentarios previos realizados por el integrante, incluidos los comentarios que relacionan el código asistido con las entradas anteriores de `docs/AI_LOG.md`.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló `@react-native-async-storage/async-storage` mediante Expo.
+  - Se conservó Firebase/Firestore como fuente de verdad para el campo `isApproved`.
+  - Se propuso guardar únicamente el `driverId` en AsyncStorage.
+  - Se propuso agregar funciones para guardar, leer y eliminar el `driverId`.
+  - Se propuso agregar una suscripción con `onSnapshot` al documento `drivers/{driverId}`.
+  - Se propuso ampliar `DriverContext.js` para administrar la sesión y el perfil del conductor.
+  - Se propuso llamar la función de inicio de sesión después de guardar correctamente el registro en Firestore.
+  - Se propuso modificar `App.js` para controlar la navegación según el estado de aprobación.
+  - Se mantuvieron los comentarios existentes escritos por el integrante.
+  - No se guardaron datos bancarios, números de tarjetas, credenciales privadas ni el perfil completo en AsyncStorage.
+  - No se utilizó AsyncStorage como fuente de verdad para `isApproved`.
+  - No se modificó la lógica interna de mapas, GPS, solicitudes de viaje ni viajes pertenecientes a Juan Deyan.
+  - No se permitió que el conductor cambiara `isApproved` desde la aplicación.
+
+- Archivos y commit:
+
+  - `package.json`
+  - `package-lock.json`
+  - `src/services/driverService.js`
+  - `src/context/DriverContext.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `App.js`
+  - `docs/AI_LOG.md`
+  - Commit: `INSERTAR_AQUI_HASH_CORTO`
+
+- Verificación:
+
+  Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+  git diff --check
+  git status
+
+La verificación debe confirmar que:
+-La aplicación muestre el registro cuando no existe un driverId guardado.
+-Después de enviar el registro, el driverId se guarde en AsyncStorage.
+-El documento del conductor se lea desde drivers/{driverId}.
+-La aplicación muestre PendingApprovalScreen cuando isApproved sea false.
+-El mapa no se monte mientras la cuenta esté pendiente.
+-El cambio de isApproved de false a true sea detectado mediante onSnapshot.
+-El mapa se habilite únicamente cuando isApproved === true.
+-La disponibilidad permanezca desactivada mientras la cuenta no esté aprobada.
+-Si isApproved vuelve a false, la disponibilidad se desactive y se bloquee nuevamente el acceso operativo.
+-La aplicación muestre un estado de error cuando el documento no exista o falle la lectura de Firestore.
+-Los módulos de mapas, GPS y viajes continúen sin modificaciones funcionales.
+
+- Aprendizaje: Aprendí que AsyncStorage debe utilizarse únicamente para conservar el identificador necesario para restaurar la sesión, pero no debe reemplazar a Firestore como fuente de verdad del estado de aprobación.
+También comprendí que onSnapshot permite reaccionar a los cambios realizados en Firestore en tiempo real. La navegación debe esperar a conocer el estado del perfil antes de montar el mapa, porque deshabilitar solamente el interruptor de disponibilidad no impide que se monten los hooks relacionados con la ubicación y las solicitudes.
+Además, aprendí que el contexto permite centralizar la sesión del conductor y evitar que cada pantalla mantenga su propia versión de isApproved.
+
+Estado del bloque: En implementación y pruebas.
+
+Próximo paso: Ejecutar todas las pruebas de sesión, aprobación y bloqueo del mapa, actualizar el hash real del commit y confirmar que únicamente se modificaron los archivos correspondientes al módulo de registro y perfil del conductor.
 
 

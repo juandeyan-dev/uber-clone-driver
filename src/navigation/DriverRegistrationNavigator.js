@@ -1,3 +1,7 @@
+// AI-assisted: see docs/AI_LOG.md #4, #13, #14, #15
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+// Navegador de pestañas de registro del conductor y manejo de envío de formularios con subida de imágenes a Cloudinary y sesión local.
+
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -9,22 +13,27 @@ import PendingApprovalScreen from '../screens/driverRegistration/PendingApproval
 import { TabBarIndicator } from 'react-native-tab-view';
 import { uploadImageToCloudinary } from '../services/cloudinaryService';
 import { saveDriverRegistration } from '../services/driverService';
-
-//AI -assisted: see docs/AI_LOG.md #4, #13, #14
-// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+import { useDriverSession } from '../context/DriverContext';
 
 const Tab = createMaterialTopTabNavigator();
 
 function RegistrationContent() {
     const { formIsComplete, form } = useRegistration();
+    const { startDriverSession } = useDriverSession();
     const [submitted, setSubmitted] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
 
-
     async function handleSubmit() {
-        if (!formIsComplete || isSubmitting || form.isApproved !== false) {
+        console.log('🔍 [handleSubmit] Verificando formulario...');
+
+        if (!formIsComplete) {
+            alert('El formulario aún está incompleto. Revisa que todos los campos y fotos estén listos.');
+            return;
+        }
+
+        if (isSubmitting) {
             return;
         }
 
@@ -32,6 +41,8 @@ function RegistrationContent() {
         setSubmitError('');
 
         try {
+            console.log('🚀 [handleSubmit] Iniciando subida de imágenes...');
+
             const [
                 profilePhoto,
                 vehiclePhoto,
@@ -39,27 +50,14 @@ function RegistrationContent() {
                 soatPhoto,
                 technicalReviewPhoto,
             ] = await Promise.all([
-                uploadImageToCloudinary(
-                    form.personal.profilePhoto,
-                    'drivers/profile'
-                ),
-                uploadImageToCloudinary(
-                    form.vehicle.vehiclePhoto,
-                    'drivers/vehicle'
-                ),
-                uploadImageToCloudinary(
-                    form.documents.licensePhoto,
-                    'drivers/license'
-                ),
-                uploadImageToCloudinary(
-                    form.documents.soatPhoto,
-                    'drivers/soat'
-                ),
-                uploadImageToCloudinary(
-                    form.documents.technicalReviewPhoto,
-                    'drivers/technical-review'
-                ),
+                uploadImageToCloudinary(form.personal.profilePhoto, 'drivers/profile'),
+                uploadImageToCloudinary(form.vehicle.vehiclePhoto, 'drivers/vehicle'),
+                uploadImageToCloudinary(form.documents.licensePhoto, 'drivers/license'),
+                uploadImageToCloudinary(form.documents.soatPhoto, 'drivers/soat'),
+                uploadImageToCloudinary(form.documents.technicalReviewPhoto, 'drivers/technical-review'),
             ]);
+
+            console.log('✅ [handleSubmit] Imágenes subidas con éxito.');
 
             const uploadedUrls = {
                 profilePhoto,
@@ -69,21 +67,18 @@ function RegistrationContent() {
                 technicalReviewPhoto,
             };
 
-            const savedDriver = await saveDriverRegistration(
-                form,
-                uploadedUrls
-            );
+            console.log('💾 [handleSubmit] Guardando en Firestore...');
+            const savedDriver = await saveDriverRegistration(form, uploadedUrls);
 
-            console.log('Registro guardado correctamente:', savedDriver);
+            console.log('📱 [handleSubmit] Iniciando sesión...');
+            await startDriverSession(savedDriver.driverId);
 
+            console.log('🎉 [handleSubmit] ¡Todo exitoso!');
             setSubmitted(true);
         } catch (error) {
-            console.error('Error al guardar el registro:', error);
-
-            setSubmitError(
-                error?.message ||
-                'No fue posible enviar el registro. Intenta nuevamente.'
-            );
+            console.error('❌ [handleSubmit] Error capturado:', error);
+            alert(`Error: ${error.message}`);
+            setSubmitError(error?.message || 'No fue posible enviar el registro.');
         } finally {
             setIsSubmitting(false);
         }
@@ -92,7 +87,6 @@ function RegistrationContent() {
     if (submitted) {
         return <PendingApprovalScreen />;
     }
-
 
     return (
         <View style={styles.screen}>
@@ -119,7 +113,6 @@ function RegistrationContent() {
                     component={DocumentsTab}
                     options={{ title: 'Documentos' }}
                 />
-
             </Tab.Navigator>
 
             {submitError ? (

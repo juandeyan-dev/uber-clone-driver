@@ -1,11 +1,11 @@
+// AI-assistant: see docs/AI_LOG.md #4, #10, #13
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+
 import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRegistration } from '../driverRegistration/RegistrationContext';
-
-// AI-assistant: see docs/AI_LOG.md #4, #10
-// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
 export default function DocumentsTab() {
     const { form, updateSection } = useRegistration();
@@ -68,7 +68,6 @@ export default function DocumentsTab() {
         }
     }
 
-
     function toggleTerms() {
         updateSection(
             'documents',
@@ -86,7 +85,7 @@ export default function DocumentsTab() {
 
     function formatDate(date) {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
 
         return `${year}-${month}-${day}`;
@@ -96,7 +95,7 @@ export default function DocumentsTab() {
         const storedDate = documents[field];
 
         if (storedDate) {
-            return new Date(`${storedDate}T12:00:00`)
+            return new Date(`${storedDate}T12:00:00`);
         }
 
         return new Date();
@@ -128,7 +127,7 @@ export default function DocumentsTab() {
                 onValueChange={handleExpirationDateChange}
                 onDismiss={() => setActiveDateField(null)}
             />
-        )
+        );
     }
 
     return (
@@ -149,7 +148,7 @@ export default function DocumentsTab() {
             <TouchableOpacity
                 style={styles.photoButton}
                 onPress={() => selectDocumentPhoto('licensePhoto')}
-            > // AI-assisted: see docs/AI_LOG.md #13
+            >
                 <Text>
                     {documents.licensePhoto
                         ? 'Cambiar foto de licencia'
@@ -158,7 +157,6 @@ export default function DocumentsTab() {
             </TouchableOpacity>
 
             <ErrorMessage message={errors.licensePhoto} />
-
 
             <Text style={styles.label}>Vencimiento de licencia</Text>
             <TouchableOpacity style={styles.dateButton}
@@ -177,19 +175,16 @@ export default function DocumentsTab() {
             <TouchableOpacity
                 style={styles.photoButton}
                 onPress={() => selectDocumentPhoto('soatPhoto')}
-            > // AI-assisted: see docs/AI_LOG.md #13
+            >
                 <Text>
-                    {documents.soatPhoto
-                        ? 'Cambiar foto del SOAT'
-                        : 'Seleccionar foto del SOAT'}
+                    {documents.soatPhoto ? 'Cambiar foto del SOAT' : 'Seleccionar foto del SOAT'}
                 </Text>
             </TouchableOpacity>
 
             <ErrorMessage message={errors.soatPhoto} />
 
-
             <Text style={styles.label}>Vencimiento del SOAT</Text>
-            <TouchableOpacity style={styles.dateButton} // AI-assisted: see docs/AI_LOG.md #12
+            <TouchableOpacity style={styles.dateButton}
                 onPress={() => setActiveDateField('soatExpiration')}
             >
                 <Text style={styles.dateButtonText}>
@@ -205,7 +200,7 @@ export default function DocumentsTab() {
             <TouchableOpacity
                 style={styles.photoButton}
                 onPress={() => selectDocumentPhoto('technicalReviewPhoto')}
-            > // AI-assisted: see docs/AI_LOG.md #13
+            >
                 <Text>
                     {documents.technicalReviewPhoto
                         ? 'Cambiar foto de revisión'
@@ -214,7 +209,6 @@ export default function DocumentsTab() {
             </TouchableOpacity>
 
             <ErrorMessage message={errors.technicalReviewPhoto} />
-
 
             <Text style={styles.label}>
                 Vencimiento de revisión técnico-mecánica
@@ -275,7 +269,6 @@ function ErrorMessage({ message }) {
 
     return <Text style={styles.error}>{message}</Text>;
 }
-
 const styles = StyleSheet.create({
     container: {
         padding: 20,
