@@ -1,40 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Switch, TouchableOpacity } from 'react-native';
-import  {useNavigation} from '@react-navigation/native';
+import React, { useState, useContext } from 'react';
+import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-
+import { DriverContext } from '../context/DriverContext';
 import MapView, { Marker } from 'react-native-maps';
 import useDriverLocation from '../services/useDriverLocation';
 import useTripRequests from '../services/useTripRequests';
 
-export default function MapScreen() {
-    const [isAvailable, setIsAvailable] = useState(false);
+export default function MapScreen({ navigation }) {
+    // 1. Extraemos earnings de la bóveda global
+    const { isAvailable, setIsAvailable, earnings } = useContext(DriverContext);
     const { location } = useDriverLocation(isAvailable);
     const { incomingRequests, timeLeft, rejectRequest } = useTripRequests(isAvailable);
 
     // Valor quemado temporalmente para probar la UI
     const [isApproved, setIsApproved] = useState(true);   
-    const navigation = useNavigation(); 
 
-    //Funciones 
+    // Funciones 
     const acceptTrip = () => {
-        // Lógica para aceptar el viaje
         const acceptedTripData = incomingRequests;
         rejectRequest(); 
-        navigation.navigate('ActiveTrip', {trip: acceptedTripData});
-
-    }
+        navigation.navigate('ActiveTripScreen', { trip: acceptedTripData });
+    };
 
     return (
         <View style={{ flex: 1 }}>
+            <View style={styles.earningsBadge}>
+                <Text style={styles.earningsText}>
+                    Ganancias: ${earnings}
+                </Text>
+            </View>
+
             {!isApproved && (
-                <View style={{ backgroundColor: '#ffebee', padding: 15, alignItems: 'center' }}>
+                <View style={{ backgroundColor: '#ffebee', padding: 15, alignItems: 'center', marginTop: 40 }}>
                     <Text style={{ color: '#c62828', textAlign: 'center', fontWeight: 'bold' }}>
                         Tu cuenta está pendiente de aprobación. No puedes recibir viajes.
                     </Text>
                 </View>
             )}
-            <View style= {{padding: 10, alignItems: 'center'}}>
+            
+            <View style= {{padding: 10, alignItems: 'center', marginTop: isApproved ? 30 : 0}}>
                 <Switch 
                     value={isAvailable} 
                     onValueChange={setIsAvailable}
@@ -107,5 +112,28 @@ export default function MapScreen() {
             )}
         </View>
     );
+}
 
-};//Corchete de cierre del componente MapScreen
+// 3. Estilos añadidos al final para el badge flotante
+const styles = StyleSheet.create({
+    earningsBadge: {
+        position: 'absolute',
+        top: 45,
+        alignSelf: 'center',
+        backgroundColor: '#ffffff',
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        zIndex: 20,
+    },
+    earningsText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#2e7d32',
+    },
+});

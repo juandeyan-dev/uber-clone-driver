@@ -489,7 +489,17 @@ Archivos y commit: App.js, src/screens/ActiveTripScreen.js, src/navigation/Drive
 Verificación: El flujo de navegación funciona: al presionar "Aceptar" en la tarjeta del mapa, el sistema navega a pantalla completa hacia "Viaje en Curso", inyectando y renderizando origen, destino y tarifa correctamente.
 Aprendizaje: Comprendí la diferencia arquitectónica entre Stack Navigators y Tab Navigators, y cómo evitar acoplar flujos operativos (viajes) con flujos administrativos (registros).
 
-
+### Entrada #11
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Resolver el bloqueo de renderizado del mapa nativo en el dispositivo físico, implementar el Estado Global (Context API) y finalizar el ciclo del viaje con actualización de ganancias.
+Prompt: "Ya estoy harto, sigue sin aparecerme nada... Pero ese archivo será para manejar Context API?... Otra cosa, en esa misma bitácora meto lo que me diste del coso flotante..."
+Resumen de la respuesta: Se diagnosticó que el dispositivo físico (Samsung S23 Ultra) bloquea el renderizado de react-native-maps sin una API Key válida, difiriendo la configuración visual para priorizar la lógica. Se corrigió un error crítico de arquitectura que violaba las Reglas de los Hooks (Hooks declarados después de Early Returns). Se estructuró DriverContext para dar memoria global a la app y se integró un indicador visual de ganancias.
+Qué se usó / modificó / descartó: Se creó la bóveda global DriverContext.js. Se modificó App.js para envolver el enrutador con DriverProvider. Se reestructuró ActiveTripScreen.js moviendo los Hooks al nivel superior, usando <Polyline> nativo en lugar de Google Directions, e implementando la función finishTrip. Se modificó MapScreen.js para leer la disponibilidad y ganancias globalmente y renderizar el "badge" flotante. Se descartó temporalmente el uso de la API Key facturable.
+Archivos y commit: src/context/DriverContext.js, App.js, src/screens/ActiveTripScreen.js, src/screens/MapScreen.js (Commit: d9f4a21)
+Verificación: El estado del switch (disponibilidad) sobrevive al navegar entre pantallas. Al presionar "Finalizar viaje", la navegación retorna silenciosamente al mapa y el badge flotante se actualiza reflejando la suma de la tarifa de la carrera.
+Aprendizaje: Comprendí las Reglas estrictas de los Hooks en React (jamás declararlos después de un return condicional), el uso de Context API para evitar la pérdida de estados locales al desmontar pantallas, y cómo las restricciones de hardware/servicios de Google afectan el renderizado en dispositivos físicos.
 
 
 
