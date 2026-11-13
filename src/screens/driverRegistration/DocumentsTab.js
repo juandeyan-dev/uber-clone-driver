@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRegistration } from '../driverRegistration/RegistrationContext';
@@ -11,8 +11,6 @@ export default function DocumentsTab() {
     const documents = form.documents;
 
     const [errors, setErrors] = useState({});
-
-    const [showLicensePicker, setShowLicensePicker] = useState(false);
 
     const [activeDateField, setActiveDateField] = useState(null);
 
@@ -145,7 +143,7 @@ export default function DocumentsTab() {
             </TouchableOpacity>
 
             <Text style={styles.label}>Vencimiento del SOAT</Text>
-            <TouchableOpacity styles={styles.dateButton}
+            <TouchableOpacity style={styles.dateButton} // AI-assisted: see docs/AI_LOG.md #12
                 onPress={() => setActiveDateField('soatExpiration')}
             >
                 <Text style={styles.dateButtonText}>

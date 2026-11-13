@@ -762,6 +762,82 @@ Próximo paso: Validar que las fechas de vencimiento de la licencia, el SOAT y l
 Próximo paso: Continuar con el siguiente bloque de validaciones del formulario del conductor.
 
 
+### Entrada #12
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Apellido
+- Herramienta: Manus
+- Objetivo: Completar el Bloque 2 de validaciones del formulario del conductor sin duplicar funcionalidades que ya existían en el repositorio.
+
+- Prompt: "vamos entoces con el bloque 2, y inicia la siguiente entrada"
+
+- Prompt adicional: "oye revisa bien eso me estas poniendo cosas que ya estan"
+
+- Prompt adicional: "iniciemos entoces"
+
+- Prompt adicional: "todo funciona correctamente dame la entrada 12"
+
+- Resumen de la respuesta: Manus revisó el estado actual de la rama `stiven` y analizó `VehicleTab.js`, `DocumentsTab.js` y `RegistrationContext.js` antes de proponer cambios. Durante la revisión se confirmó que varias validaciones ya existían: conversión de la placa a mayúsculas, formato colombiano `ABC123`, límite de 30 caracteres para marca y modelo, validación inicial de cuatro dígitos para el año, mínimo de seis pasajeros para la categoría XL, correo de Mercado Pago, aceptación de términos y comisión visible del 20 %.
+
+  Para evitar duplicar código, el trabajo se concentró en completar y corregir las validaciones faltantes del formulario.
+
+- Qué se usó / modificó / descartó:
+
+  En `VehicleTab.js` se realizaron los siguientes ajustes:
+
+  - Se eliminó el import no utilizado `Touchable`.
+  - Se agregó la referencia de la Entrada #12.
+  - Se normalizaron los campos de año y capacidad para aceptar únicamente números.
+  - Se agregó la validación para impedir que el año del vehículo sea superior al año actual.
+  - Se creó una función para validar la categoría XL al momento de seleccionarla.
+  - Se mantuvo la exigencia de mínimo seis pasajeros para vehículos XL.
+  - Se conservaron las validaciones existentes de placa, marca, modelo y campos obligatorios.
+
+  En `DocumentsTab.js` se realizaron los siguientes ajustes:
+
+  - Se eliminó el import no utilizado `use`.
+  - Se eliminó el estado `showLicensePicker`, porque el selector utiliza `activeDateField`.
+  - Se corrigió el uso de `styles` por `style` en el botón del SOAT.
+  - Se agregó la referencia de la Entrada #12.
+  - Se conservaron las validaciones existentes del correo de Mercado Pago, los documentos y la aceptación visible de la comisión del 20 %.
+
+  En `RegistrationContext.js` se realizó el siguiente ajuste:
+
+  - Se agregó la referencia de la Entrada #12.
+  - Se incluyó la fecha de vencimiento de la revisión técnico-mecánica dentro de `formIsComplete`.
+  - El formulario ahora exige fechas futuras válidas para licencia, SOAT y revisión técnico-mecánica.
+
+  No se modificaron los archivos correspondientes al mapa, GPS, solicitudes de viaje, viaje activo ni pagos pertenecientes al trabajo de Juan Deyan.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/VehicleTab.js`
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+
+- Verificación: Se ejecutó Expo con la aplicación actualizada y se comprobó que funcionara correctamente.
+
+  Se verificó que:
+
+  - El año del vehículo no aceptara valores superiores al año actual.
+  - Los campos de año y capacidad eliminaran caracteres no numéricos.
+  - La categoría XL mostrara un error cuando la capacidad fuera menor de seis pasajeros.
+  - La capacidad de seis pasajeros o más eliminara el error correspondiente.
+  - La fecha de revisión técnico-mecánica fuera necesaria para completar el formulario.
+  - El botón del SOAT conservara su estilo correcto.
+  - Los campos de documentos y la aceptación de la comisión del 20 % siguieran funcionando.
+  - La aplicación iniciara sin errores en Expo.
+  - `git diff --check` quedara sin errores de espacios finales.
+
+- Aprendizaje: Aprendí que antes de agregar una validación es necesario revisar el código existente para no duplicar lógica ni sobrescribir el trabajo anterior. También comprendí que una validación debe ejecutarse tanto cuando se modifica un campo como cuando cambia un campo relacionado, como ocurre con la categoría XL y la capacidad de pasajeros.
+
+  Además, aprendí a diferenciar errores funcionales de errores de formato detectados por `git diff --check`, como los espacios sobrantes al final de una línea.
+
+- Estado del bloque: Bloque 2 completado y probado correctamente.
+
+- Próximo paso: Crear el commit de este bloque, actualizar el hash real en esta entrada y continuar con el Bloque 3 relacionado con fotografías, selección de imágenes y flujo de aprobación.
 
 
 

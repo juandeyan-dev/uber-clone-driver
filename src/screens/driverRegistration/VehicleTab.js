@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRegistration } from './RegistrationContext';
 
 //AI-assistant: see docs/AI_LOG.md #4
@@ -20,6 +20,10 @@ export default function VehicleTab() {
 
         if (field === 'plate') {
             normalizedValue = value.toUpperCase().replace(/\s/g, '');
+        }
+
+        if (field === 'year' || field === 'capacity') {
+            normalizedValue = value.replace(/\D/g, '');
         }
 
         updateField(field, normalizedValue);
@@ -54,6 +58,15 @@ export default function VehicleTab() {
         }
 
         if (
+            field === 'year' &&
+            normalizedValue.trim() !== '' &&
+            /^\d{4}$/.test(normalizedValue) &&
+            Number(normalizedValue) > new Date().getFullYear()
+        ) {
+            message = 'El año no puede ser superior al año actual.';
+        } // AI-assisted: see docs/AI_LOG.md #12
+
+        if (
             field === 'capacity' &&
             vehicle.category === 'xl' &&
             normalizedValue.trim() !== '' &&
@@ -67,6 +80,26 @@ export default function VehicleTab() {
             [field]: message,
         }));
     }
+
+    function handleCategoryChange(category) {
+        updateField('category', category);
+
+        let message = '';
+
+        if (
+            category === 'xl' &&
+            vehicle.capacity.trim() !== '' &&
+            Number(vehicle.capacity) < 6
+        ) {
+            message = 'La categoría XL requiere mínimo 6 pasajeros.';
+        }
+
+        setErrors((previousErrors) => ({
+            ...previousErrors,
+            category: message,
+        }));
+    }
+
 
 
     return (
@@ -85,7 +118,7 @@ export default function VehicleTab() {
                             styles.optionButton,
                             vehicle.category === option.value && styles.selectedOption,
                         ]}
-                        onPress={() => updateField('category', option.value)}
+                        onPress={() => handleCategoryChange(option.value)}
                     >
                         <Text>{option.label}</Text>
                     </TouchableOpacity>

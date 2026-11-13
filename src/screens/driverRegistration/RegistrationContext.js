@@ -91,6 +91,7 @@ export function RegistrationProvider({ children }) {
             documents.licenseNumber.trim() !== '' &&
             isExpirationDateValid(documents.licenseExpiration) &&
             isExpirationDateValid(documents.soatExpiration) && // AI-assisted: see docs/AI_LOG.md #11
+            isExpirationDateValid(documents.technicalReviewExpiration) && // AI-assisted: see docs/AI_LOG.md #12
             documents.mercadoPagoEmail.trim() !== '' &&
             documents.acceptedTerms === true;
 
