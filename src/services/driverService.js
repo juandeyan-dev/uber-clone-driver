@@ -1,9 +1,9 @@
-// AI-assisted: see docs/AI_LOG.md #14, 15
+// AI-assisted: see docs/AI_LOG.md #14, 15, 16
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 // Persistencia del driverId en almacenamiento local y lectura del perfil en tiempo real desde Firestore.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { collection, doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, onSnapshot, serverTimestamp, setDoc, updateDoc} from 'firebase/firestore';
 
 import { db } from './firebase';
 
@@ -66,6 +66,29 @@ export async function saveDriverRegistration(form, uploadedUrls) {
         driverId: driverReference.id,
         isApproved: false,
     };
+}
+
+export async function updateDriverPersonalData(driverId, personalData) {
+    if (!driverId || typeof driverId !== 'string') {
+        throw new Error('El driverId no es válido.');
+    }
+
+    if (!personalData) {
+        throw new Error('Faltan los datos personales del conductor.');
+    }
+
+    const driverReference = doc(db, 'drivers', driverId);
+
+    await updateDoc(driverReference, {
+        'personal.fullName': personalData.fullName,
+        'personal.identityNumber': personalData.identityNumber,
+        'personal.phone': personalData.phone,
+        'personal.birthDate': personalData.birthDate,
+        'personal.gender': personalData.gender,
+        'personal.email': personalData.email,
+        'personal.language': personalData.language,
+        updatedAt: serverTimestamp(),
+    });
 }
 
 // Gestión segura del identificador de sesión local en AsyncStorage (sin datos sensibles)

@@ -1072,7 +1072,7 @@ La verificación debe confirmar que:
 También comprendí que onSnapshot permite reaccionar a los cambios realizados en Firestore en tiempo real. La navegación debe esperar a conocer el estado del perfil antes de montar el mapa, porque deshabilitar solamente el interruptor de disponibilidad no impide que se monten los hooks relacionados con la ubicación y las solicitudes.
 Además, aprendí que el contexto permite centralizar la sesión del conductor y evitar que cada pantalla mantenga su propia versión de isApproved.
 
-Estado del bloque: En implementación y pruebas.
+- Estado del bloque: Bloque 4 completado y probado correctamente.
 
 Próximo paso: Ejecutar todas las pruebas de sesión, aprobación y bloqueo del mapa, actualizar el hash real del commit y confirmar que únicamente se modificaron los archivos correspondientes al módulo de registro y perfil del conductor.
 

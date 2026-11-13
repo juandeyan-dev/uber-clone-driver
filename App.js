@@ -1,27 +1,22 @@
-// AI-assisted: see docs/AI_LOG.md #15
+// AI-assisted: see docs/AI_LOG.md #15 & #16
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 // Guardián de navegación superior: bloquea el montaje de MapScreen y módulos operativos hasta confirmar isApproved === true.
 
 import 'react-native-gesture-handler';
 import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ActivityIndicator,StyleSheet,Text,View,} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  DriverProvider,
-  useDriverSession,
-} from './src/context/DriverContext';
+import {DriverProvider,useDriverSession,} from './src/context/DriverContext';
 
 import DriverRegistrationNavigator from './src/navigation/DriverRegistrationNavigator';
 import PendingApprovalScreen from './src/screens/driverRegistration/PendingApprovalScreen';
 import MapScreen from './src/screens/MapScreen';
 import ActiveTripScreen from './src/screens/ActiveTripScreen';
+
+// Importamos el navegador aislado del perfil y configuración del conductor
+import DriverProfileNavigator from './src/navigation/DriverProfileNavigator';
 
 const Stack = createStackNavigator();
 
@@ -51,7 +46,7 @@ function SessionErrorScreen({ message }) {
   );
 }
 
-// Navegador exclusivo para conductores aprobados (MapScreen y ActiveTrip)
+// Navegador exclusivo para conductores aprobados (MapScreen, ActiveTrip y DriverProfileNavigator)
 function ApprovedDriverNavigator() {
   return (
     <Stack.Navigator initialRouteName="MapScreen">
@@ -66,6 +61,17 @@ function ApprovedDriverNavigator() {
         options={{
           title: 'Viaje en curso',
           headerLeft: () => null,
+        }}
+      />
+      {/* 
+        Nuevo navegador de perfil integrado de forma aislada. 
+        Mantiene oculto su header superior para que cada pantalla interna controle sus títulos.
+      */}
+      <Stack.Screen
+        name="DriverProfileNavigator"
+        component={DriverProfileNavigator}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
@@ -108,7 +114,7 @@ function ApplicationNavigator() {
     return <PendingApprovalScreen />;
   }
 
-  // 5. Aprobado -> Permite acceso completo al mapa y viajes
+  // 5. Aprobado -> Permite acceso completo al mapa, viajes y perfil
   if (sessionStatus === 'approved') {
     return <ApprovedDriverNavigator />;
   }

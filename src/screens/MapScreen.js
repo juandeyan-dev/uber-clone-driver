@@ -14,12 +14,12 @@ export default function MapScreen({ navigation }) {
     const { incomingRequests, timeLeft, rejectRequest } = useTripRequests(isAvailable);
 
     // Valor quemado temporalmente para probar la UI
-    const [isApproved, setIsApproved] = useState(true);   
+    const [isApproved, setIsApproved] = useState(true);
 
     // Funciones 
     const acceptTrip = () => {
         const acceptedTripData = incomingRequests;
-        rejectRequest(); 
+        rejectRequest();
         navigation.navigate('ActiveTripScreen', { trip: acceptedTripData });
     };
 
@@ -31,6 +31,19 @@ export default function MapScreen({ navigation }) {
                 </Text>
             </View>
 
+            {/* Acceso rápido al perfil del conductor.
+            No modifica la lógica de GPS, solicitudes ni viajes. */}
+            <TouchableOpacity
+                style={styles.profileButton}
+                onPress={() => navigation.navigate('DriverProfileNavigator')}
+                accessibilityRole="button"
+                accessibilityLabel="Abrir perfil del conductor"
+            >
+                <Text style={styles.profileButtonText}>
+                    Perfil
+                </Text>
+            </TouchableOpacity>
+
             {!isApproved && (
                 <View style={{ backgroundColor: '#ffebee', padding: 15, alignItems: 'center', marginTop: 40 }}>
                     <Text style={{ color: '#c62828', textAlign: 'center', fontWeight: 'bold' }}>
@@ -38,18 +51,18 @@ export default function MapScreen({ navigation }) {
                     </Text>
                 </View>
             )}
-            
-            <View style= {{padding: 10, alignItems: 'center', marginTop: isApproved ? 30 : 0}}>
-                <Switch 
-                    value={isAvailable} 
+
+            <View style={{ padding: 10, alignItems: 'center', marginTop: isApproved ? 30 : 0 }}>
+                <Switch
+                    value={isAvailable}
                     onValueChange={setIsAvailable}
                     disabled={!isApproved}
                 />
             </View>
-            
+
             {location != null ? (
                 <MapView
-                    style={{ flex: 1}}
+                    style={{ flex: 1 }}
                     region={{
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
@@ -70,20 +83,20 @@ export default function MapScreen({ navigation }) {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text>Esperando ubicación...</Text>
                 </View>
-            )}   
+            )}
 
             {incomingRequests != null && (
                 <View style={{
-                    position: 'absolute', 
-                    bottom: 40, 
-                    left: 20, 
-                    right: 20, 
-                    backgroundColor: 'white', 
-                    padding: 20, 
+                    position: 'absolute',
+                    bottom: 40,
+                    left: 20,
+                    right: 20,
+                    backgroundColor: 'white',
+                    padding: 20,
                     borderRadius: 15,
-                    elevation: 5, 
+                    elevation: 5,
                     shadowColor: '#000',
-                    shadowOpacity: 0.2, 
+                    shadowOpacity: 0.2,
                     shadowRadius: 10
                 }}>
                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>¡Nuevo Viaje!</Text>
@@ -96,13 +109,13 @@ export default function MapScreen({ navigation }) {
                         ⏳ {timeLeft}s
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={acceptTrip}
                             style={{ backgroundColor: '#2e7d32', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8 }}>
                             <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Aceptar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity 
-                            onPress={rejectRequest} 
+                        <TouchableOpacity
+                            onPress={rejectRequest}
                             style={{ backgroundColor: '#c62828', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 8 }}
                         >
                             <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Rechazar</Text>
@@ -131,9 +144,35 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         zIndex: 20,
     },
+
     earningsText: {
         fontSize: 15,
         fontWeight: 'bold',
         color: '#2e7d32',
+    },
+
+    profileButton: {
+        position: 'absolute',
+        top: 45,
+        right: 16,
+        zIndex: 20,
+        elevation: 7,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        backgroundColor: '#1976d2',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+
+    profileButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
 });
