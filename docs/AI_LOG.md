@@ -1147,7 +1147,7 @@ Próximo paso: Ejecutar todas las pruebas de sesión, aprobación y bloqueo del 
   - `src/screens/MapScreen.js`
   - `App.js`
   - `docs/AI_LOG.md`
-  - Commit: `INSERTAR_AQUI_HASH_CORTO`
+  - Commit: `127377e`
 
 - Verificación:
 
