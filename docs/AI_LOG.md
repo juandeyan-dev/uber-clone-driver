@@ -908,9 +908,90 @@ Próximo paso: Continuar con el siguiente bloque de validaciones del formulario 
 - Próximo paso: Confirmar la configuración del proyecto e integrar la persistencia del perfil del conductor con `isApproved: false`, además de definir el almacenamiento seguro de las imágenes.
 
 
+### Entrada #14
 
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Integrar Firebase/Firestore y Cloudinary al flujo de registro del conductor, guardar el perfil completo con `isApproved: false` y reemplazar las URI locales de las imágenes por URLs permanentes de Cloudinary.
 
+- Prompt: "¿Cómo empezamos con la integración de la base de datos y Cloudinary?"
 
+- Prompts adicionales:
+  - "Ya tengo todo configurado: credenciales reales de Firebase y Cloudinary en el .env, y Firestore activo. Por favor, avanza directamente con la Tarea 4: dame el código exacto para crear src/services/driverService.js y guardar el registro completo en Firestore con isApproved: false y las URLs de Cloudinary."
+  - "Ya creé src/services/firebase.js con el código indicado y el git status --short muestra correctamente ?? src/services/firebase.js."
+  - "Ya creé y verifiqué los tres servicios en src/services/ (firebase.js, cloudinaryService.js, driverService.js). El .env está correctamente ignorado. Por favor, dime cuál es el siguiente paso para conectar ambos servicios al botón de Enviar registro en el formulario."
+  - "Ya modifiqué src/navigation/DriverRegistrationNavigator.js integrando uploadImageToCloudinary y saveDriverRegistration, actualicé el botón con los estados de carga/error y añadí el estilo. Reinicié Expo con caché limpia y probé el flujo completo."
+
+- Resumen de la respuesta: Manus guió la configuración de Firebase y Cloudinary, detectó que `.env` estaba siendo rastreado por Git y explicó cómo retirarlo del índice sin eliminarlo localmente. También indicó cómo proteger las variables de entorno mediante `.gitignore` y `.env.example`.
+
+  Se crearon servicios separados para inicializar Firebase/Firestore, subir imágenes a Cloudinary mediante un upload preset unsigned y guardar el perfil del conductor. El servicio de Firestore genera un identificador para el conductor y establece `isApproved: false`.
+
+  Finalmente, se conectó el botón `Enviar registro` para subir en paralelo las cinco fotografías, obtener sus URLs `secure_url`, guardar el perfil en Firestore y mostrar `PendingApprovalScreen` únicamente después de completar correctamente ambas operaciones.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló la dependencia `firebase`.
+  - Se conservó `expo-image-picker` para seleccionar imágenes localmente.
+  - Se retiró `.env` del control de versiones con `git rm --cached .env`.
+  - Se actualizaron `.gitignore` y `.env.example`.
+  - Se creó `src/services/firebase.js`.
+  - Se creó `src/services/cloudinaryService.js`.
+  - Se creó `src/services/driverService.js`.
+  - Se modificó `src/navigation/DriverRegistrationNavigator.js`.
+  - Se utilizó `Promise.all` para subir las cinco imágenes en paralelo.
+  - Se agregaron estados visibles de carga y error al botón de envío.
+  - Se estableció `isApproved: false` al guardar el perfil.
+  - No se incluyeron contraseñas, cuentas bancarias, números de tarjetas ni secretos administrativos.
+  - No se modificaron los módulos de mapas, GPS ni viajes pertenecientes a Juan Deyan.
+
+- Archivos y commit:
+
+  - `.gitignore`
+  - `.env.example`
+  - `package.json`
+  - `package-lock.json`
+  - `src/services/firebase.js`
+  - `src/services/cloudinaryService.js`
+  - `src/services/driverService.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `docs/AI_LOG.md`
+  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+
+- Verificación: Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+
+-La prueba completa confirmó que:
+
+Las cinco imágenes se subieron correctamente a Cloudinary.
+
+Cloudinary devolvió URLs permanentes secure_url.
+
+Se creó correctamente el documento del conductor en la colección drivers de Firestore.
+
+El documento guardó isApproved: false.
+
+Las URI locales fueron reemplazadas por URLs de Cloudinary.
+
+El botón mostró el estado Enviando registro....
+
+El botón no permitió envíos duplicados durante la operación.
+
+Los errores de subida o guardado se mostraron en la interfaz.
+
+La aplicación pasó correctamente a PendingApprovalScreen.
+
+El archivo .env permaneció local y no rastreado por Git.
+
+Aprendizaje: Aprendí que las URI locales de una imagen no deben guardarse como URLs definitivas en Firestore. Primero deben convertirse en URLs remotas mediante Cloudinary.
+
+También comprendí la importancia de separar responsabilidades: Firebase inicializa la conexión, Cloudinary gestiona las imágenes y driverService guarda el perfil. Además, isApproved debe comenzar en false y no puede ser cambiado por el conductor desde la aplicación.
+
+Estado del bloque: Integración de Firebase, Firestore y Cloudinary completada y probada correctamente.
+
+Próximo paso: Implementar la lectura del perfil y el bloqueo persistente del acceso al mapa y a la disponibilidad cuando isApproved !== true.
 
 
 
