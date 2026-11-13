@@ -1,30 +1,28 @@
+// AI-assisted: see docs/AI_LOG.md #14
 import React, { createContext, useState } from 'react';
 
 export const DriverContext = createContext();
 
-export const DriverProvider = ({ children }) => {
-    
+export function DriverProvider({ children }) {
     const [isAvailable, setIsAvailable] = useState(false);
-    
-    // Memoria de Ganancias y Viajes
     const [earnings, setEarnings] = useState(0);
-    const [completedTrips, setCompletedTrips] = useState(0);
+    const [user, setUser] = useState(null); 
 
+    // Función global para sumar el dinero al finalizar un viaje
     const finishTrip = (fare) => {
-        setEarnings(prev => prev + fare);
-        setCompletedTrips(prev => prev + 1);
-        setIsAvailable(true);
+        setEarnings(prev => prev + Number(fare));
     };
 
     return (
-        <DriverContext.Provider value={{
-            isAvailable,
-            setIsAvailable,
-            earnings,
-            completedTrips,
-            finishTrip
+        <DriverContext.Provider value={{ 
+            isAvailable, 
+            setIsAvailable, 
+            earnings, 
+            finishTrip,
+            user,
+            setUser
         }}>
             {children}
         </DriverContext.Provider>
     );
-};
+}
