@@ -3,11 +3,10 @@
 // Pantalla para editar únicamente los datos personales del conductor de forma aislada y segura.
 
 import React, { useEffect, useState } from 'react';
-import {ActivityIndicator,ScrollView,StyleSheet,Text,TextInput,TouchableOpacity,View,} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 
 import { updateDriverPersonalData } from '../../services/driverService';
 import { useDriverSession } from '../../context/DriverContext';
-import { updateDriverPersonalData } from '../../services/driverService';
 
 /**
  * Componente auxiliar para renderizar mensajes de error bajo cada campo de texto.

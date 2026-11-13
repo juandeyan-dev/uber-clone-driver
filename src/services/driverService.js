@@ -121,29 +121,6 @@ export async function updateDriverVehicleData(driverId, vehicleData) {
     });
 }
 
-export async function updateDriverPersonalData(driverId, personalData) {
-    if (!driverId || typeof driverId !== 'string') {
-        throw new Error('El driverId no es válido.');
-    }
-
-    if (!personalData) {
-        throw new Error('Faltan los datos personales del conductor.');
-    }
-
-    const driverReference = doc(db, 'drivers', driverId);
-
-    await updateDoc(driverReference, {
-        'personal.fullName': personalData.fullName,
-        'personal.identityNumber': personalData.identityNumber,
-        'personal.phone': personalData.phone,
-        'personal.birthDate': personalData.birthDate,
-        'personal.gender': personalData.gender,
-        'personal.email': personalData.email,
-        'personal.language': personalData.language,
-        updatedAt: serverTimestamp(),
-    });
-}
-
 export async function updateDriverDocumentsData(
     driverId,
     documentsData
