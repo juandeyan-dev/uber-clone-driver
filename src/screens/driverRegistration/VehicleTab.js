@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRegistration } from './RegistrationContext';
 
@@ -100,6 +101,35 @@ export default function VehicleTab() {
         }));
     }
 
+    async function selectVehiclePhoto() {
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                vehiclePhoto: 'Se necesita permiso para seleccionar una imagen.',
+            }));
+
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets?.length > 0) {
+            updateField('vehiclePhoto', result.assets[0].uri);
+
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                vehiclePhoto: '',
+            }));
+        }
+    }
 
 
     return (
@@ -188,13 +218,22 @@ export default function VehicleTab() {
             <Text style={styles.label}>Foto del vehículo</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => updateField('vehiclePhoto', 'pendiente')}
+                onPress={selectVehiclePhoto} // AI-assisted: see docs/AI_LOG.md #13
             >
-                <Text>Seleccionar Foto</Text>
+                <Text>
+                    {vehicle.vehiclePhoto
+                        ? 'Cambiar foto del vehículo'
+                        : 'Seleccionar foto del vehículo'}
+                </Text>
             </TouchableOpacity>
+
+            <ErrorMessage message={errors.vehiclePhoto} />
+
             <Text style={styles.helperText}>
-                la foto debe mostrar la placa. Cloudinary se agregara despues.
+                La foto debe mostrar claramente la placa del vehículo.
+                La subida a Cloudinary se integrará después.
             </Text>
+
         </ScrollView>
     );
 }

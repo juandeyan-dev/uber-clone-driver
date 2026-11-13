@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRegistration } from '../driverRegistration/RegistrationContext';
@@ -36,6 +37,37 @@ export default function DocumentsTab() {
             [field]: message,
         }));
     }
+
+    async function selectDocumentPhoto(field) {
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                [field]: 'Se necesita permiso para seleccionar una imagen.',
+            }));
+
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets?.length > 0) {
+            updateSection('documents', field, result.assets[0].uri);
+
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                [field]: '',
+            }));
+        }
+    }
+
 
     function toggleTerms() {
         updateSection(
@@ -116,10 +148,17 @@ export default function DocumentsTab() {
             <Text style={styles.label}>Foto de licencia</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => handleChange('licensePhoto', 'pendiente')}
-            >
-                <Text>Seleccionar foto</Text>
+                onPress={() => selectDocumentPhoto('licensePhoto')}
+            > // AI-assisted: see docs/AI_LOG.md #13
+                <Text>
+                    {documents.licensePhoto
+                        ? 'Cambiar foto de licencia'
+                        : 'Seleccionar foto de licencia'}
+                </Text>
             </TouchableOpacity>
+
+            <ErrorMessage message={errors.licensePhoto} />
+
 
             <Text style={styles.label}>Vencimiento de licencia</Text>
             <TouchableOpacity style={styles.dateButton}
@@ -137,10 +176,17 @@ export default function DocumentsTab() {
             <Text style={styles.label}>Foto del SOAT</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => handleChange('soatPhoto', 'pendiente')}
-            >
-                <Text>Seleccionar foto</Text>
+                onPress={() => selectDocumentPhoto('soatPhoto')}
+            > // AI-assisted: see docs/AI_LOG.md #13
+                <Text>
+                    {documents.soatPhoto
+                        ? 'Cambiar foto del SOAT'
+                        : 'Seleccionar foto del SOAT'}
+                </Text>
             </TouchableOpacity>
+
+            <ErrorMessage message={errors.soatPhoto} />
+
 
             <Text style={styles.label}>Vencimiento del SOAT</Text>
             <TouchableOpacity style={styles.dateButton} // AI-assisted: see docs/AI_LOG.md #12
@@ -158,12 +204,17 @@ export default function DocumentsTab() {
             <Text style={styles.label}>Foto de revisión técnico-mecánica</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() =>
-                    handleChange('technicalReviewPhoto', 'pendiente')
-                }
-            >
-                <Text>Seleccionar foto</Text>
+                onPress={() => selectDocumentPhoto('technicalReviewPhoto')}
+            > // AI-assisted: see docs/AI_LOG.md #13
+                <Text>
+                    {documents.technicalReviewPhoto
+                        ? 'Cambiar foto de revisión'
+                        : 'Seleccionar foto de revisión técnico-mecánica'}
+                </Text>
             </TouchableOpacity>
+
+            <ErrorMessage message={errors.technicalReviewPhoto} />
+
 
             <Text style={styles.label}>
                 Vencimiento de revisión técnico-mecánica

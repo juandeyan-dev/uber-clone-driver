@@ -8,6 +8,9 @@ import { isAdult } from '../../utils/isAdult';
 const RegistrationContext = createContext(null);
 
 const initialForm = {
+    isApproved: false, // AI-assisted: see docs/AI_LOG.md #13
+
+
     personal: {
         profilePhoto: '',
         fullName: '',
@@ -71,6 +74,7 @@ export function RegistrationProvider({ children }) {
         const { personal, vehicle, documents } = form;
 
         const personalComplete =
+            personal.profilePhoto.trim() !== '' && // AI-assisted: see docs/AI_LOG.md #13
             personal.fullName.trim() !== '' &&
             personal.identityNumber.trim() !== '' &&
             personal.phone.trim() !== '' &&
@@ -79,6 +83,7 @@ export function RegistrationProvider({ children }) {
             personal.email.trim() !== '';
 
         const vehicleComplete =
+            vehicle.vehiclePhoto.trim() !== '' &&
             vehicle.category.trim() !== '' &&
             vehicle.plate.trim() !== '' &&
             vehicle.brand.trim() !== '' &&
@@ -87,13 +92,17 @@ export function RegistrationProvider({ children }) {
             vehicle.color.trim() !== '' &&
             vehicle.capacity.trim() !== '';
 
-        const documentsComplete =
+        const documentsComplete = // AI-assisted: see docs/AI_LOG.md #13
             documents.licenseNumber.trim() !== '' &&
+            documents.licensePhoto.trim() !== '' &&
+            documents.soatPhoto.trim() !== '' &&
+            documents.technicalReviewPhoto.trim() !== '' &&
             isExpirationDateValid(documents.licenseExpiration) &&
-            isExpirationDateValid(documents.soatExpiration) && // AI-assisted: see docs/AI_LOG.md #11
-            isExpirationDateValid(documents.technicalReviewExpiration) && // AI-assisted: see docs/AI_LOG.md #12
+            isExpirationDateValid(documents.soatExpiration) &&
+            isExpirationDateValid(documents.technicalReviewExpiration) &&
             documents.mercadoPagoEmail.trim() !== '' &&
             documents.acceptedTerms === true;
+
 
         return personalComplete && vehicleComplete && documentsComplete;
     }, [form]);

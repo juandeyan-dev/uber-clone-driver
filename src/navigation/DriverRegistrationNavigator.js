@@ -1,26 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PersonalDataTab from '../screens/driverRegistration/PersonalDataTab';
 import VehicleTab from '../screens/driverRegistration/VehicleTab';
 import DocumentsTab from '../screens/driverRegistration/DocumentsTab';
 import { RegistrationProvider, useRegistration } from '../screens/driverRegistration/RegistrationContext';
+import PendingApprovalScreen from '../screens/driverRegistration/PendingApprovalScreen';
 import { TabBarIndicator } from 'react-native-tab-view';
 
-//AI -assisted: see docs/AI_LOG.md #4
+//AI -assisted: see docs/AI_LOG.md #4, #13
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
 const Tab = createMaterialTopTabNavigator();
 
 function RegistrationContent() {
     const { formIsComplete, form } = useRegistration();
+    const [submitted, setSubmitted] = useState(false);
 
     function handleSubmit() {
-        if (!formIsComplete) {
+        if (!formIsComplete || form.isApproved !== false) {
             return;
         }
-        console.log('Formulario listo para enviarse:', form);
+
+        console.log('Registro enviado para aprobación:', {
+            ...form,
+            isApproved: false,
+        });
+
+        setSubmitted(true);
     }
+
+    if (submitted) {
+        return <PendingApprovalScreen />;
+    }
+
 
     return (
         <View style={styles.screen}>

@@ -815,7 +815,7 @@ Próximo paso: Continuar con el siguiente bloque de validaciones del formulario 
   - `src/screens/driverRegistration/DocumentsTab.js`
   - `src/screens/driverRegistration/RegistrationContext.js`
   - `docs/AI_LOG.md`
-  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+  - Commit: `cfcb1c2`
 
 - Verificación: Se ejecutó Expo con la aplicación actualizada y se comprobó que funcionara correctamente.
 
@@ -839,6 +839,73 @@ Próximo paso: Continuar con el siguiente bloque de validaciones del formulario 
 
 - Próximo paso: Crear el commit de este bloque, actualizar el hash real en esta entrada y continuar con el Bloque 3 relacionado con fotografías, selección de imágenes y flujo de aprobación.
 
+### Entrada #13
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Apellido
+- Herramienta: Manus
+- Objetivo: Implementar la selección de fotografías obligatorias del conductor, validar su existencia antes del envío y crear el flujo de registro pendiente de aprobación con `isApproved: false`.
+
+- Prompt: "Iniciemos con el Bloque 3 y redacta la Entrada #13."
+
+- Prompts adicionales:
+  - "funcionando correctamente :D sigamos"
+  - "Todo funciona correctamente, continuemos con la Tarea 3 del Bloque 3: fotos de licencia, SOAT y revisión técnico-mecánica."
+  - "funciona correctamente wi"
+  - "Todo validado correctamente para la Tarea 4. Pasemos a la Tarea 5: flujo de pendiente de aprobación e isApproved: false."
+  - "funcionando correctamente... y esas cosas de base de datos y demas, tambien las debo hacer recuerda, si es necesario integrarlas ya lo hacemos tu diras en que momento es ideal empezar con eso"
+
+- Resumen de la respuesta: Manus revisó la estructura existente del registro y confirmó que los botones de fotografías utilizaban valores simulados como `pendiente`. Se implementó la selección real de imágenes mediante `expo-image-picker`, guardando temporalmente las URI locales dentro del contexto del formulario.
+
+  Se agregaron selectores para la foto de perfil, la foto del vehículo, la licencia de conducción, el SOAT y la revisión técnico-mecánica. También se incorporó una pantalla de estado pendiente de aprobación y se estableció el valor inicial `isApproved: false`.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló y utilizó `expo-image-picker`.
+  - Se agregó selección de imagen para la foto de perfil en `PersonalDataTab.js`.
+  - Se agregó selección de imagen para la foto del vehículo en `VehicleTab.js`.
+  - Se agregó una función reutilizable para seleccionar las fotos de licencia, SOAT y revisión técnico-mecánica en `DocumentsTab.js`.
+  - Se almacenaron las URI locales de las imágenes en el contexto del registro.
+  - Se actualizaron las validaciones de `formIsComplete` para exigir las cinco fotografías obligatorias.
+  - Se agregó `isApproved: false` al formulario inicial.
+  - Se creó `PendingApprovalScreen.js`.
+  - Se actualizó `DriverRegistrationNavigator.js` para mostrar la pantalla de pendiente después de enviar un registro válido.
+  - Se mantuvo visible el mensaje de comisión de plataforma del 20 %.
+  - No se modificaron los módulos de mapas, GPS, solicitudes de viaje ni viaje activo pertenecientes a Juan Deyan.
+  - La subida real a Cloudinary y la persistencia en Firestore/MongoDB quedaron pendientes para el siguiente bloque, debido a que todavía deben confirmarse la configuración y las credenciales seguras del proyecto.
+  - No se guardaron credenciales reales dentro del código.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `src/screens/driverRegistration/VehicleTab.js`
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `src/screens/driverRegistration/PendingApprovalScreen.js`
+  - `docs/AI_LOG.md`
+  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+
+- Verificación: Se ejecutó la aplicación con Expo y se comprobó que:
+
+  - La galería se abriera correctamente para seleccionar imágenes.
+  - La foto de perfil pudiera seleccionarse y cambiarse.
+  - La foto del vehículo pudiera seleccionarse y cambiarse.
+  - Las fotos de licencia, SOAT y revisión técnico-mecánica pudieran seleccionarse y cambiarse.
+  - Cancelar la selección no generara errores.
+  - El formulario permaneciera incompleto mientras faltara alguna fotografía obligatoria.
+  - El botón de envío solo se habilitara al completar los datos, las fechas, las fotografías y la aceptación de la comisión.
+  - Al enviar el registro válido apareciera la pantalla de pendiente de aprobación.
+  - El estado inicial y el objeto enviado conservaran `isApproved: false`.
+  - La aplicación funcionara correctamente en Expo.
+
+- Aprendizaje: Aprendí a reutilizar una función para seleccionar diferentes fotografías sin duplicar la misma lógica. También comprendí que una URI local permite probar la selección de imágenes, pero no equivale a una subida real a Cloudinary.
+
+  Además, entendí que `isApproved: false` debe establecerse desde la creación del perfil y que el conductor no puede cambiar ese valor desde la aplicación. La persistencia en una base de datos y la carga real de imágenes se implementarán de forma segura en el siguiente bloque.
+
+- Estado del bloque: Bloque 3 completado y probado correctamente en su parte local.
+
+- Próximo paso: Confirmar la configuración del proyecto e integrar la persistencia del perfil del conductor con `isApproved: false`, además de definir el almacenamiento seguro de las imágenes.
 
 
 
