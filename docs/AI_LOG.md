@@ -501,6 +501,18 @@ Archivos y commit: src/context/DriverContext.js, App.js, src/screens/ActiveTripS
 Verificación: El estado del switch (disponibilidad) sobrevive al navegar entre pantallas. Al presionar "Finalizar viaje", la navegación retorna silenciosamente al mapa y el badge flotante se actualiza reflejando la suma de la tarifa de la carrera.
 Aprendizaje: Comprendí las Reglas estrictas de los Hooks en React (jamás declararlos después de un return condicional), el uso de Context API para evitar la pérdida de estados locales al desmontar pantallas, y cómo las restricciones de hardware/servicios de Google afectan el renderizado en dispositivos físicos.
 
+### Entrada #12
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Reorganizar la interfaz de MapScreen para evitar colisiones visuales y migrar el motor de mapas a OpenStreetMap (WebView) para evadir bloqueos de renderizado por facturación en Google Cloud.
+Prompt: "Bueno, lo que necesito antes de seguir hablando de lo de API, necesito arreglar lo del coso flotante de ganancias... Listo, mostré los tres estados, ni en el pc emula... por el momento no implementaré lo que me diste arriba, voy a intentar que mi compañero saque la API de google maps... Dame porfa otra vez esos códigos..."
+Resumen de la respuesta: Se rediseñó la UI de MapScreen anclando el interruptor de disponibilidad en la parte inferior y dejando el indicador de ganancias libre en la parte superior. Ante el fallo de renderizado de react-native-maps tanto en emulador como en dispositivo físico sin API Key facturable, se implementó un componente alternativo usando OpenStreetMap y Leaflet incrustados en un WebView, respaldado por la autorización docente para simular datos externos.
+Qué se usó / modificó / descartó: Se descartó el uso de react-native-maps y la facturación de Google Cloud. Se instaló react-native-webview. Se creó el componente src/components/FreeMap.js con renderizado HTML/JS de Leaflet. Se modificaron src/screens/MapScreen.js y src/screens/ActiveTripScreen.js para integrar FreeMap, corregir el nombre de ruta en navigation.navigate('ActiveTrip') y reacomodar los controles flotantes.
+Archivos y commit: package.json, src/components/FreeMap.js, src/screens/MapScreen.js, src/screens/ActiveTripScreen.js (Commit: f389f9d)
+Verificación: Probado en dispositivo físico (Samsung Galaxy S23 Ultra) mediante Expo Go con túnel. El mapa de Medellín carga con calles reales, el marcador GPS ubica al conductor sin obstruir el badge de ganancias, y la pantalla ActiveTripScreen traza la línea de ruta entre origen y destino recorriendo los tres estados del viaje hasta sumar la tarifa.
+Aprendizaje: Comprendí cómo desacoplar dependencias propietarias de mapas mediante componentes WebView con librerías Open Source (Leaflet/OpenStreetMap) para eliminar costos de infraestructura en prototipos, además de estructurar layouts absolutos en React Native evitando superposición de controles.
+
 
 
 
