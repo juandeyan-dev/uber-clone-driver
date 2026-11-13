@@ -417,6 +417,89 @@ Aprendizaje: Comprendí la importancia del orden de declaración (Temporal Dead 
 
 - Aprendizaje: Entendí que la comisión se calcula después de redondear la tarifa y que la propina no debe reducirse por la comisión de la plataforma. También aprendí que la función debe utilizar una única configuración compartida y rechazar categorías que no existan en el contrato del proyecto.
 
+### Entrada #5
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Integrar el mapa interactivo (react-native-maps) centrado en la ubicación del conductor.
+Prompt: "import React, { useState, useEffect } from 'react'... <MapView style={{ flex: 1}} initialRegion={{..." (código de integración del mapa).
+Resumen de la respuesta: El Tech Lead validó la extracción de coordenadas pero identificó un error crítico de Flexbox en React Native: el contenedor padre carecía de `flex: 1`, lo que causaría que el mapa colapsara a 0 píxeles. Se recomendó cambiar `initialRegion` por `region` para que la cámara siga al conductor.
+Qué se usó / modificó / descartó: Se reemplazó el texto plano de coordenadas por `<MapView>` y `<Marker>`. Se corrigió el estilo del contenedor principal `<View style={{ flex: 1 }}>`.
+Archivos y commit: src/screens/MapScreen.js (Commit: 97b5d61)
+Verificación: El mapa se renderiza ocupando toda la pantalla y la cámara rastrea las actualizaciones de la ubicación del conductor.
+Aprendizaje: Entendí las reglas de herencia de Flexbox en React Native y la diferencia clave entre `initialRegion` y `region` para el seguimiento en tiempo real.
+
+### Entrada #6
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar validación de estado "isApproved" para bloquear la disponibilidad del conductor.
+Prompt: "Pero si es buena idea simular el backend? es fácil editarlo cuando necesitemos hacer la verdadera aprobación desde firebase?" (Consulta sobre Mocking de datos).
+Resumen de la respuesta: El Tech Lead explicó los beneficios del "Mocking" para desacoplar el desarrollo frontend del backend. Durante la revisión, detectó un auto-import defectuoso de VS Code (`Color`) que causaba crash, y un problema de Flexbox donde el banner dividía la pantalla a la mitad con el mapa.
+Qué se usó / modificó / descartó: Se agregó un estado simulado `isApproved` en `MapScreen.js`. Se refactorizó la UI usando renderizado condicional con el operador `&&` para mostrar un banner de advertencia rojo y deshabilitar dinámicamente la prop `disabled` del `Switch`. Se eliminó la importación inválida.
+Archivos y commit: src/screens/MapScreen.js (Commit: 511527b)
+Verificación: El conductor no puede cambiar a "Disponible" si `isApproved` es falso, mostrando correctamente la alerta visual sin deformar el mapa.
+Aprendizaje: Comprendí el concepto de Mocking para avanzar sin bloqueos externos, el principio DRY (Don't Repeat Yourself) en componentes condicionales, y cómo evitar estilos generados automáticamente por el IDE.
+
+### Entrada #7
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Crear el hook `useTripRequests` para escuchar las solicitudes de viajes entrantes.
+Prompt: "import React, { useState, useEffect } from 'react'... export default function useTripRequests(isAvailable) {..." (código del hook con el timeout integrado).
+Resumen de la respuesta: El Tech Lead aprobó la estructura base pero detectó un riesgo de "memory leak" (viajes fantasma) si el conductor se desconectaba antes de cumplirse el temporizador, además de señalar importaciones visuales innecesarias en un archivo lógico.
+Qué se usó / modificó / descartó: Se eliminaron las importaciones de React Native. Se implementó la limpieza del temporizador usando `clearTimeout(timeoutId)` en el return del `useEffect` para destruir procesos pendientes al desmontar o cambiar la disponibilidad.
+Archivos y commit: src/services/useTripRequests.js (Commit: 0710146)
+Verificación: El estado simula correctamente la llegada de un viaje tras 5 segundos de estar disponible, y el temporizador se cancela exitosamente si el conductor se desconecta antes.
+Aprendizaje: Entendí la importancia vital de limpiar procesos asíncronos (como temporizadores o suscripciones) en los Custom Hooks para evitar fugas de memoria y actualizaciones de estado en componentes desmontados.
+
+### Entrada #8
+Fecha: 2026-11-06
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Renderizar la tarjeta de la solicitud entrante superpuesta al mapa de navegación.
+Prompt: "import React, { useState, useEffect } from 'react'... {incomingRequests != null && (..." (código de integración condicional en la UI).
+Resumen de la respuesta: El Tech Lead validó el uso correcto de `position: 'absolute'` y `z-index` implícito para superponer la UI sobre el mapa, pero detectó un error de sintaxis crítico por la falta de una etiqueta de cierre de JSX (`</View>`).
+Qué se usó / modificó / descartó: Se integró el hook `useTripRequests` en `MapScreen.js`. Se construyó una tarjeta flotante utilizando renderizado condicional dependiente del estado `incomingRequests`, corrigiendo el cierre de etiquetas JSX para evitar fallos de compilación.
+Archivos y commit: src/screens/MapScreen.js (Commit: edd90b3)
+Verificación: Al activar la disponibilidad, la tarjeta blanca con los datos del viaje (origen, destino, tarifa) aparece flotando sobre la parte inferior del mapa tras 5 segundos.
+Aprendizaje: Reforcé el uso de posicionamiento absoluto en React Native para superposición de interfaces y la importancia de la estructura estricta de cierre de etiquetas en JSX.
+
+### Entrada #9
+Fecha: 2026-11-09
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar temporizador regresivo, botones de acción (Aceptar/Rechazar) y navegación a la pantalla de viaje.
+Prompt: "Pues tiene que ser implementado los botones debajo de la targeta de solicitud... y lo de los 15 segundos no es parecido a esto?" (Consulta sobre temporizadores).
+Resumen de la respuesta: El Tech Lead diferenció el uso de `setTimeout` (una vez) vs `setInterval` (repetitivo). Se instruyó mover toda la lógica del reloj al hook para mantener la vista limpia, e implementar `useNavigation` para la transición de pantallas.
+Qué se usó / modificó / descartó: Se actualizó `useTripRequests` agregando `setInterval` para un conteo de 15 a 0, limpiándolo en el ciclo de desmontaje. En `MapScreen.js` se agregaron botones interactivos con `TouchableOpacity` y la función `acceptTrip` que transfiere el estado del viaje a `'ActiveTrip'` mediante `react-navigation`.
+Archivos y commit: src/services/useTripRequests.js, src/screens/MapScreen.js (Commit: 782d516)
+Verificación: El temporizador baja visualmente cada segundo; al llegar a cero o presionar "Rechazar", la tarjeta se limpia. Al presionar "Aceptar", se ejecuta la función de navegación con los parámetros.
+Aprendizaje: Comprendí la diferencia entre temporizadores en JavaScript (`setTimeout` vs `setInterval`) dentro del ciclo de vida de React, y cómo pasar parámetros de estado entre pantallas mediante rutas.
+
+### Entrada #10
+Fecha: 2026-11-11
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Crear pantalla de Viaje en Curso (ActiveTripScreen) y configurar el enrutador principal en App.js.
+Prompt: "La verdad no veo ningún MainNavigator... (compartiendo código de App.js)".
+Resumen de la respuesta: El Tech Lead aclaró que `App.js` funciona como el enrutador principal del proyecto. Se corrigió un error de arquitectura donde se había anidado la pantalla operativa dentro de los tabs de registro, indicando cómo registrar las rutas a nivel raíz.
+Qué se usó / modificó / descartó: Se creó `src/screens/ActiveTripScreen.js` configurado para recibir y renderizar `route.params.trip`. Se revirtió la modificación en el archivo de Stiven (`DriverRegistrationNavigator`). Se modificó `App.js` para registrar `MapScreen` y `ActiveTripScreen` en el `Stack.Navigator`, asignando el mapa como `initialRouteName`.
+Archivos y commit: App.js, src/screens/ActiveTripScreen.js, src/navigation/DriverRegistrationNavigator.js (Commit: f7bc4a3)
+Verificación: El flujo de navegación funciona: al presionar "Aceptar" en la tarjeta del mapa, el sistema navega a pantalla completa hacia "Viaje en Curso", inyectando y renderizando origen, destino y tarifa correctamente.
+Aprendizaje: Comprendí la diferencia arquitectónica entre Stack Navigators y Tab Navigators, y cómo evitar acoplar flujos operativos (viajes) con flujos administrativos (registros).
+
+### Entrada #11
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Resolver el bloqueo de renderizado del mapa nativo en el dispositivo físico, implementar el Estado Global (Context API) y finalizar el ciclo del viaje con actualización de ganancias.
+Prompt: "Ya estoy harto, sigue sin aparecerme nada... Pero ese archivo será para manejar Context API?... Otra cosa, en esa misma bitácora meto lo que me diste del coso flotante..."
+Resumen de la respuesta: Se diagnosticó que el dispositivo físico (Samsung S23 Ultra) bloquea el renderizado de react-native-maps sin una API Key válida, difiriendo la configuración visual para priorizar la lógica. Se corrigió un error crítico de arquitectura que violaba las Reglas de los Hooks (Hooks declarados después de Early Returns). Se estructuró DriverContext para dar memoria global a la app y se integró un indicador visual de ganancias.
+Qué se usó / modificó / descartó: Se creó la bóveda global DriverContext.js. Se modificó App.js para envolver el enrutador con DriverProvider. Se reestructuró ActiveTripScreen.js moviendo los Hooks al nivel superior, usando <Polyline> nativo en lugar de Google Directions, e implementando la función finishTrip. Se modificó MapScreen.js para leer la disponibilidad y ganancias globalmente y renderizar el "badge" flotante. Se descartó temporalmente el uso de la API Key facturable.
+Archivos y commit: src/context/DriverContext.js, App.js, src/screens/ActiveTripScreen.js, src/screens/MapScreen.js (Commit: 80b53b8)
+Verificación: El estado del switch (disponibilidad) sobrevive al navegar entre pantallas. Al presionar "Finalizar viaje", la navegación retorna silenciosamente al mapa y el badge flotante se actualiza reflejando la suma de la tarifa de la carrera.
+Aprendizaje: Comprendí las Reglas estrictas de los Hooks en React (jamás declararlos después de un return condicional), el uso de Context API para evitar la pérdida de estados locales al desmontar pantallas, y cómo las restricciones de hardware/servicios de Google afectan el renderizado en dispositivos físicos.
 ### Entrada #8
 
 - Fecha: 2026-11-05

@@ -47,6 +47,7 @@ function RegistrationContent() {
                     component={DocumentsTab}
                     options={{ title: 'Documentos' }}
                 />
+
             </Tab.Navigator>
 
             <TouchableOpacity
