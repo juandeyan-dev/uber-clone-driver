@@ -884,7 +884,7 @@ Próximo paso: Continuar con el siguiente bloque de validaciones del formulario 
   - `src/navigation/DriverRegistrationNavigator.js`
   - `src/screens/driverRegistration/PendingApprovalScreen.js`
   - `docs/AI_LOG.md`
-  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+  - Commit: `b94675a`
 
 - Verificación: Se ejecutó la aplicación con Expo y se comprobó que:
 
