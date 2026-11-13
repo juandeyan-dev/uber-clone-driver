@@ -190,7 +190,7 @@ export function subscribeToDriverProfile(driverId, onProfileChange, onError) {
         },
         (error) => {
             if (onError) {
-                onError(error);
+                onError(error); 
             }
         }
     );
