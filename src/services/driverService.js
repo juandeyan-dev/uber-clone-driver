@@ -3,7 +3,14 @@
 // Persistencia del driverId en almacenamiento local y lectura del perfil en tiempo real desde Firestore.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {collection,doc,onSnapshot,serverTimestamp,setDoc,updateDoc} from 'firebase/firestore';
+import {
+    collection,
+    doc,
+    onSnapshot,
+    serverTimestamp,
+    setDoc,
+    updateDoc,
+} from 'firebase/firestore';
 
 import { db } from './firebase';
 
@@ -91,6 +98,29 @@ export async function updateDriverPersonalData(driverId, personalData) {
     });
 }
 
+export async function updateDriverVehicleData(driverId, vehicleData) {
+    if (!driverId || typeof driverId !== 'string') {
+        throw new Error('El driverId no es válido.');
+    }
+
+    if (!vehicleData) {
+        throw new Error('Faltan los datos del vehículo.');
+    }
+
+    const driverReference = doc(db, 'drivers', driverId);
+
+    await updateDoc(driverReference, {
+        'vehicle.category': vehicleData.category,
+        'vehicle.plate': vehicleData.plate,
+        'vehicle.brand': vehicleData.brand,
+        'vehicle.model': vehicleData.model,
+        'vehicle.year': vehicleData.year,
+        'vehicle.color': vehicleData.color,
+        'vehicle.capacity': vehicleData.capacity,
+        updatedAt: serverTimestamp(),
+    });
+}
+
 export async function updateDriverPersonalData(driverId, personalData) {
     if (!driverId || typeof driverId !== 'string') {
         throw new Error('El driverId no es válido.');
@@ -110,6 +140,35 @@ export async function updateDriverPersonalData(driverId, personalData) {
         'personal.gender': personalData.gender,
         'personal.email': personalData.email,
         'personal.language': personalData.language,
+        updatedAt: serverTimestamp(),
+    });
+}
+
+export async function updateDriverDocumentsData(
+    driverId,
+    documentsData
+) {
+    if (!driverId || typeof driverId !== 'string') {
+        throw new Error('El driverId no es válido.');
+    }
+
+    if (!documentsData) {
+        throw new Error('Faltan los datos de los documentos.');
+    }
+
+    const driverReference = doc(db, 'drivers', driverId);
+
+    await updateDoc(driverReference, {
+        'documents.licenseNumber':
+            documentsData.licenseNumber,
+        'documents.licenseExpiration':
+            documentsData.licenseExpiration,
+        'documents.soatExpiration':
+            documentsData.soatExpiration,
+        'documents.technicalReviewExpiration':
+            documentsData.technicalReviewExpiration,
+        'documents.mercadoPagoEmail':
+            documentsData.mercadoPagoEmail,
         updatedAt: serverTimestamp(),
     });
 }

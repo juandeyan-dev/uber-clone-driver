@@ -270,6 +270,17 @@ export default function DriverProfileScreen({ navigation }) {
                     label="Foto del vehículo"
                     value={getDocumentStatus(vehicle.vehiclePhoto)}
                 />
+
+                {/* Botón para navegar a la pantalla de edición del vehículo */}
+                <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => navigation.navigate('EditVehicle')}
+                >
+                    <Text style={styles.editButtonText}>
+                        Editar vehículo
+                    </Text>
+                </TouchableOpacity>
+
             </View>
 
             {/* Tarjeta: Documentos y Pagos */}
@@ -325,6 +336,31 @@ export default function DriverProfileScreen({ navigation }) {
                 />
             </View>
 
+                            {/* Botón para navegar a la edición de documentos */}
+                <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() =>
+                        navigation.navigate('EditDocuments')
+                    }
+                >
+                    <Text style={styles.editButtonText}>
+                        Editar documentos
+                    </Text>
+                </TouchableOpacity>
+
+                            {/* Botón para abrir las preferencias locales */}
+            <TouchableOpacity
+                style={styles.editButton}
+                onPress={() =>
+                    navigation.navigate('DriverPreferences')
+                }
+            >
+                <Text style={styles.editButtonText}>
+                    Preferencias
+                </Text>
+            </TouchableOpacity>
+
+
             {/* Botón de Cierre de Sesión */}
             <TouchableOpacity
                 style={styles.logoutButton}
@@ -337,6 +373,8 @@ export default function DriverProfileScreen({ navigation }) {
         </ScrollView>
     );
 }
+
+
 
 // Estilos visuales organizados para mantener coherencia con el diseño de la app
 const styles = StyleSheet.create({

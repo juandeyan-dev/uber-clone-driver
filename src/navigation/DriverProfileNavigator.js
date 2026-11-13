@@ -5,8 +5,12 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
+import EditVehicleScreen from '../screens/driverProfile/EditVehicleScreen';
 import DriverProfileScreen from '../screens/driverProfile/DriverProfileScreen';
 import EditPersonalDataScreen from '../screens/driverProfile/EditPersonalDataScreen';
+import EditDocumentsScreen from '../screens/driverProfile/EditDocumentsScreen';
+import DriverPreferencesScreen from '../screens/driverProfile/DriverPreferencesScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -28,6 +32,32 @@ export default function DriverProfileNavigator() {
                     title: 'Editar datos personales',
                 }}
             />
+
+            <Stack.Screen
+                name="EditVehicle"
+                component={EditVehicleScreen}
+                options={{
+                    title: 'Editar vehículo',
+                }}
+            />
+
+            <Stack.Screen
+                name="EditDocuments"
+                component={EditDocumentsScreen}
+                options={{
+                    title: 'Editar documentos',
+                }}
+            />
+
+            <Stack.Screen
+                name="DriverPreferences"
+                component={DriverPreferencesScreen}
+                options={{
+                    title: 'Preferencias',
+                }}
+            />
+
+
         </Stack.Navigator>
     );
 }

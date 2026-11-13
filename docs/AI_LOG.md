@@ -1076,4 +1076,112 @@ Además, aprendí que el contexto permite centralizar la sesión del conductor y
 
 Próximo paso: Ejecutar todas las pruebas de sesión, aprobación y bloqueo del mapa, actualizar el hash real del commit y confirmar que únicamente se modificaron los archivos correspondientes al módulo de registro y perfil del conductor.
 
+### Entrada #16
 
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar el Bloque 4 de perfil y configuración del conductor, incluyendo la consulta del perfil desde Firestore, la edición de datos personales, vehículo y documentos, además de la persistencia local de preferencias no sensibles con AsyncStorage.
+
+- Prompt: "Continuemos con el Bloque 4: Perfil y configuración del conductor. Vamos a implementar la pantalla de perfil, la edición de datos personales, la edición del vehículo, la edición de documentos y las preferencias con AsyncStorage. Mantén mis comentarios, conserva el estilo del repositorio y no modifiques la lógica de mapas, GPS, solicitudes ni viajes de Juan."
+
+- Prompts adicionales:
+
+  - "Dame el código para crear la pantalla de perfil del conductor usando useDriverSession."
+  - "Necesito crear una navegación propia para el perfil y la configuración del conductor."
+  - "Agrega un botón en MapScreen.js para navegar a DriverProfileNavigator sin modificar la lógica de GPS ni los viajes."
+  - "Implementemos la edición de datos personales sin reemplazar los demás campos del documento de Firestore."
+  - "Implementemos la edición de los datos del vehículo conservando la fotografía existente."
+  - "Implementemos la edición de documentos, fechas de vencimiento y correo de Mercado Pago."
+  - "Guardemos el idioma y las preferencias no sensibles únicamente en AsyncStorage."
+  - "Mantén mis comentarios y adapta el código al estilo que ya existe dentro de Git."
+
+- Resumen de la respuesta: Manus guió la creación de un módulo aislado para el perfil y la configuración del conductor. La pantalla `DriverProfileScreen.js` consume `driverProfile` y `driverId` desde `useDriverSession`, que recibe la información del documento correspondiente en Firestore mediante la suscripción existente con `onSnapshot`.
+
+  La pantalla de perfil muestra la fotografía almacenada en Cloudinary, el nombre, el correo electrónico, el estado de aprobación, los datos personales, la información del vehículo y el estado de los documentos. También incluye el botón de cierre de sesión mediante `logoutDriver`.
+
+  Se creó `DriverProfileNavigator.js` como un Stack Navigator independiente del flujo operativo de Juan. Este navegador contiene las pantallas del perfil y las pantallas de edición correspondientes. Posteriormente se registró dentro de `ApprovedDriverNavigator` en `App.js`, sin modificar la lógica de mapas, GPS, solicitudes ni viajes.
+
+  Para la edición de datos personales se agregó `updateDriverPersonalData` en `driverService.js` y se utilizó `updateDoc` con rutas específicas como `personal.fullName`, `personal.email` y `personal.phone`. De esta manera se actualizan únicamente los campos permitidos sin reemplazar la fotografía ni las demás secciones del perfil.
+
+  Para la edición del vehículo se agregó `updateDriverVehicleData`. La pantalla conserva las validaciones existentes del registro: placa colombiana en formato `ABC123`, año de cuatro dígitos, año no superior al actual, marca y modelo con máximo 30 caracteres, capacidad numérica y mínimo de seis pasajeros para la categoría XL. La fotografía actual del vehículo no se reemplaza en esta tarea.
+
+  Para la edición de documentos se agregó `updateDriverDocumentsData`. Se actualizaron el número de licencia, las fechas de vencimiento y el correo de Mercado Pago. Las fotografías de licencia, SOAT y revisión técnico-mecánica se conservaron sin cambios. Las fechas deben ser posteriores al día actual y el correo debe tener un formato válido.
+
+  Finalmente, se creó `preferencesService.js` y `DriverPreferencesScreen.js` para guardar el idioma y las preferencias no sensibles de forma local mediante AsyncStorage. No se guardaron en AsyncStorage el perfil completo, fotografías, documentos, credenciales, datos bancarios ni el estado de aprobación.
+
+- Qué se usó / modificó / descartó:
+
+  - Se reutilizó `useDriverSession` como fuente global del perfil y de la sesión.
+  - Se reutilizó la suscripción `onSnapshot` de Firestore para reflejar los cambios en tiempo real.
+  - Se utilizó `updateDoc` para actualizar partes específicas del documento `drivers/{driverId}`.
+  - Se creó `src/screens/driverProfile/DriverProfileScreen.js`.
+  - Se creó `src/screens/driverProfile/EditPersonalDataScreen.js`.
+  - Se creó `src/screens/driverProfile/EditVehicleScreen.js`.
+  - Se creó `src/screens/driverProfile/EditDocumentsScreen.js`.
+  - Se creó `src/screens/driverProfile/DriverPreferencesScreen.js`.
+  - Se creó `src/navigation/DriverProfileNavigator.js`.
+  - Se creó `src/services/preferencesService.js`.
+  - Se actualizó `src/services/driverService.js` con funciones de actualización parcial.
+  - Se actualizó `App.js` para registrar el navegador aislado del perfil.
+  - Se agregó un acceso rápido desde `MapScreen.js` hacia `DriverProfileNavigator`.
+  - Se conservaron los comentarios existentes escritos por el integrante.
+  - Se reutilizaron los estilos visuales de la aplicación.
+  - Se mantuvieron las validaciones ya existentes en el registro.
+  - No se modificó `isApproved`.
+  - No se guardaron datos sensibles en AsyncStorage.
+  - No se reemplazaron fotografías existentes de Cloudinary durante la edición de datos.
+  - No se modificaron funcionalmente los módulos de mapas, GPS, solicitudes de viaje ni viaje activo pertenecientes a Juan Deyan.
+  - No se modificaron las ramas de Juan ni se realizó ningún merge con `develop`.
+
+- Archivos y commit:
+
+  - `src/services/driverService.js`
+  - `src/services/preferencesService.js`
+  - `src/navigation/DriverProfileNavigator.js`
+  - `src/screens/driverProfile/DriverProfileScreen.js`
+  - `src/screens/driverProfile/EditPersonalDataScreen.js`
+  - `src/screens/driverProfile/EditVehicleScreen.js`
+  - `src/screens/driverProfile/EditDocumentsScreen.js`
+  - `src/screens/driverProfile/DriverPreferencesScreen.js`
+  - `src/screens/MapScreen.js`
+  - `App.js`
+  - `docs/AI_LOG.md`
+  - Commit: `INSERTAR_AQUI_HASH_CORTO`
+
+- Verificación:
+
+  Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+  git diff --check
+  git status
+
+Se verificó que:
+La pantalla de perfil leyera el conductor actual desde DriverContext.
+La foto de perfil se mostrara desde la URL de Cloudinary.
+Se mostraran los datos personales, del vehículo y de los documentos.
+El estado de aprobación se mostrara sin poder modificarse desde el perfil.
+El botón de cierre de sesión eliminara el driverId local y regresara al flujo de registro.
+DriverProfileNavigator abriera correctamente desde el mapa.
+La edición de datos personales actualizara únicamente los campos de personal.
+La fotografía de perfil permaneciera intacta después de editar los datos personales.
+La edición del vehículo validara la placa, el año, la capacidad y la categoría XL.
+La fotografía del vehículo permaneciera intacta después de editar sus datos.
+La edición de documentos validara las fechas futuras y el correo de Mercado Pago.
+Las fotografías de licencia, SOAT y revisión técnico-mecánica permanecieran intactas.
+isApproved no pudiera ser cambiado desde las pantallas de perfil.
+El idioma se guardara y recuperara correctamente desde AsyncStorage.
+Las preferencias no crearan ni modificaran datos sensibles en Firestore.
+La información actualizada apareciera nuevamente gracias a onSnapshot.
+El acceso al perfil no alterara la lógica de GPS, solicitudes ni viajes.
+Los módulos pertenecientes a Juan Deyan continuaran sin modificaciones funcionales.
+
+Aprendizaje: Aprendí a separar el perfil operativo del conductor de la navegación de mapas y viajes. También comprendí que un documento de Firestore debe actualizarse de forma parcial cuando solo se modifica una sección, utilizando rutas como personal.fullName o vehicle.category, para no sobrescribir accidentalmente fotografías ni otros datos.
+Además, comprendí que AsyncStorage es apropiado para preferencias locales no sensibles, como el idioma, pero no debe utilizarse como fuente de verdad para isApproved ni para guardar el perfil completo del conductor.
+
+Aprendí que un navegador independiente permite desarrollar el módulo de perfil sin interferir con la navegación de Juan. La integración puede realizarse mediante una ruta aislada dentro del flujo de conductores aprobados.
+Estado del bloque: En implementación y pruebas.
+
+Próximo paso: Completar las pruebas del Bloque 4, actualizar el hash real del commit y continuar con el Bloque 5 — Ganancias.
