@@ -743,7 +743,7 @@ Próximo paso: Validar que las fechas de vencimiento de la licencia, el SOAT y l
   - `src/screens/driverRegistration/DocumentsTab.js`
   - `src/screens/driverRegistration/RegistrationContext.js`
   - `docs/AI_LOG.md`
-  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+  - Commit: `c9fe7e`
 
 - Verificación: Se ejecutó la aplicación con Expo y se confirmó que inició correctamente sin errores.
 
