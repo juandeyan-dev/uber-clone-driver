@@ -41,6 +41,19 @@ const initialForm = {
     },
 };
 
+function isExpirationDateValid(dateValue) {
+    if (!dateValue) {
+        return false;
+    }
+
+    const expirationDate = new Date(`${dateValue}T00:00:00`);
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+    return expirationDate > today;
+}
+
 export function RegistrationProvider({ children }) {
     const [form, setForm] = useState(initialForm);
 
@@ -76,8 +89,8 @@ export function RegistrationProvider({ children }) {
 
         const documentsComplete =
             documents.licenseNumber.trim() !== '' &&
-            documents.licenseExpiration.trim() !== '' &&
-            documents.soatExpiration.trim() !== '' &&
+            isExpirationDateValid(documents.licenseExpiration) &&
+            isExpirationDateValid(documents.soatExpiration) && // AI-assisted: see docs/AI_LOG.md #11
             documents.mercadoPagoEmail.trim() !== '' &&
             documents.acceptedTerms === true;
 
@@ -99,7 +112,7 @@ export function RegistrationProvider({ children }) {
 export function useRegistration() {
     const context = useContext(RegistrationContext);
 
-    if(!context) {
+    if (!context) {
         throw new Error(
             'useRegistration debe utilizarse dentro de un RegistrationProvider'
         )

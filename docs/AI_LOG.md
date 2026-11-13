@@ -699,9 +699,67 @@ Aprendizaje: Entendí que un solo componente DateTimePicker puede reutilizarse p
 
 Próximo paso: Validar que las fechas de vencimiento de la licencia, el SOAT y la revisión técnico-mecánica sean posteriores a la fecha actual.
 
+### Entrada #11
 
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Revisar, corregir y completar la validación de las fechas de vencimiento de la licencia de conducción, el SOAT y la revisión técnico-mecánica.
 
+- Prompt: "holaaa, me quede pausado mucho tiempo con el proyecto... debemos acabarlo hoy mismo en menos de 12 horas iwi lo ves conseguible? quiero aumentar el ritmo, haremos de a 3 tareas luego commit"
 
+- Prompt adicional: "ya yo me encargo de cambiarlo"
+
+- Prompt adicional: "vale siguiente entrada hagamos y completemos el otro punto de la lista, iniciamos desde aca"
+
+- Prompt adicional: "oye revisa bien eso me estas poniendo cosas que ya estan"
+
+- Prompt adicional: "Ya realicé las correcciones y probé Expo. Muéstrame el git diff para verificar los cambios antes del commit de la Entrada #11."
+
+- Prompt adicional: "esta muy largo para mandarlo pero funcionaron correctamente"
+
+- Resumen de la respuesta: Manus revisó el historial del repositorio y confirmó que los selectores de vencimiento de licencia, SOAT y revisión técnico-mecánica ya habían sido implementados previamente en el commit `9c0ef5a`. Por esta razón, no se volvió a crear esa funcionalidad desde cero.
+
+  Durante la revisión se identificaron y corrigieron errores existentes en `DocumentsTab.js`: el nombre incorrecto `lincenseExpiration`, el uso de `styles` en lugar de `style` en el botón del SOAT y los estilos inexistentes `dataButton` y `dataButtonText` utilizados en el campo de revisión técnico-mecánica.
+
+  También se completó la validación de vencimientos. Se estableció una fecha mínima posterior al día actual en el selector y se agregó una función para validar las fechas guardadas antes de considerar completo el formulario.
+
+- Qué se usó / modificó / descartó: Se mantuvo el componente `DateTimePicker` y la lógica existente basada en `activeDateField`, `formatDate`, `getDateValue`, `handleExpirationDateChange` y `renderDatePicker`.
+
+  Se corrigieron los nombres y estilos de los tres selectores:
+
+  - `licenseExpiration`
+  - `soatExpiration`
+  - `technicalReviewExpiration`
+
+  En `DocumentsTab.js` se agregó la restricción `minimumDate` para impedir la selección de fechas anteriores o iguales a la fecha actual.
+
+  En `RegistrationContext.js` se agregó la función `isExpirationDateValid` y se conectó la validación de las fechas de licencia y SOAT con `formIsComplete`.
+
+  No se modificaron los módulos de mapas, GPS, solicitudes de viaje, viaje activo ni pagos pertenecientes al trabajo de Juan. Tampoco se creó nuevamente la funcionalidad de selectores que ya existía.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `[REEMPLAZAR CON EL HASH REAL]`
+
+- Verificación: Se ejecutó la aplicación con Expo y se confirmó que inició correctamente sin errores.
+
+  Se verificó que los selectores de vencimiento de licencia, SOAT y revisión técnico-mecánica abrieran correctamente y conservaran las fechas seleccionadas en formato `YYYY-MM-DD`.
+
+  También se comprobó que los selectores no permitieran elegir fechas anteriores o iguales al día actual. La validación del contexto impide que las fechas inválidas sean consideradas suficientes para completar el formulario.
+
+  Finalmente, se ejecutaron las revisiones de Git correspondientes antes del commit:
+
+  ```powershell
+  git diff --check
+  git diff --cached --check
+
+- Aprendizaje: Entendí que antes de implementar una funcionalidad debo revisar el historial y el estado real del repositorio para evitar duplicar código. También comprendí que la validación visual del DateTimePicker debe complementarse con una validación en el contexto del formulario, porque los datos también pueden llegar desde otros medios. Además, aprendí que pequeños errores como escribir lincenseExpiration en lugar de licenseExpiration, utilizar styles en vez de style o referenciar estilos inexistentes pueden impedir que una funcionalidad ya implementada opere correctamente.
+
+Próximo paso: Continuar con el siguiente bloque de validaciones del formulario del conductor.
 
 
 

@@ -12,6 +12,8 @@ export default function DocumentsTab() {
 
     const [errors, setErrors] = useState({});
 
+    const [showLicensePicker, setShowLicensePicker] = useState(false);
+
     const [activeDateField, setActiveDateField] = useState(null);
 
     function handleChange(field, value) {
@@ -82,7 +84,7 @@ export default function DocumentsTab() {
         handleChange(activeDateField, formattedDate);
     }
 
-    function renderDatePicker(field){
+    function renderDatePicker(field) {
         if (activeDateField !== field) {
             return null;
         }
@@ -92,6 +94,7 @@ export default function DocumentsTab() {
                 value={getDateValue(field)}
                 mode="date"
                 display="default"
+                minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
                 onValueChange={handleExpirationDateChange}
                 onDismiss={() => setActiveDateField(null)}
             />
@@ -122,14 +125,14 @@ export default function DocumentsTab() {
 
             <Text style={styles.label}>Vencimiento de licencia</Text>
             <TouchableOpacity style={styles.dateButton}
-                onPress={() => setActiveDateField('lincenseExpiration')}
+                onPress={() => setActiveDateField('licenseExpiration')}
             >
                 <Text style={styles.dateButtonText}>
                     {documents.licenseExpiration || 'seleccionar fecha'}
                 </Text>
             </TouchableOpacity>
 
-            {renderDatePicker('lincenseExpiration')}
+            {renderDatePicker('licenseExpiration')}
 
             <ErrorMessage message={errors.licenseExpiration} />
 
@@ -143,7 +146,7 @@ export default function DocumentsTab() {
 
             <Text style={styles.label}>Vencimiento del SOAT</Text>
             <TouchableOpacity styles={styles.dateButton}
-                onPress={()=> setActiveDateField('soatExpiration')}
+                onPress={() => setActiveDateField('soatExpiration')}
             >
                 <Text style={styles.dateButtonText}>
                     {documents.soatExpiration || 'seleccionar fecha'}
@@ -169,12 +172,12 @@ export default function DocumentsTab() {
             </Text>
 
             <TouchableOpacity
-                style={styles.dataButton}
+                style={styles.dateButton}
                 onPress={() =>
                     setActiveDateField('technicalReviewExpiration')
                 }
             >
-                <Text style={styles.dataButtonText}>
+                <Text style={styles.dateButtonText}>
                     {documents.technicalReviewExpiration || 'seleccionar fecha'}
                 </Text>
             </TouchableOpacity>
@@ -247,7 +250,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         backgroundColor: '#fff',
     },
-    dateButton:{
+    dateButton: {
         borderWidth: 1,
         borderColor: '#bdbdbd',
         borderRadius: 8,
@@ -255,7 +258,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         backgroundColor: '#fff'
     },
-    dateButtonText:{
+    dateButtonText: {
         color: '#333'
     },
     photoButton: {
