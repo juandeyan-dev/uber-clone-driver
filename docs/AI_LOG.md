@@ -525,7 +525,17 @@ Archivos y commit: src/components/FreeMap.js, src/screens/ActiveTripScreen.js, s
 Verificación: Probado en emulador Pixel 7 y dispositivo físico. Al rechazar una solicitud, llega otra automáticamente a los 5 segundos. Al aceptar, la ruta azul serpentea por las calles desde Robledo hasta la bahía de la Terminal del Norte y, al iniciar el viaje, recalcula la ruta vial hasta el Parque Lleras.
 Aprendizaje: Comprendí cómo consumir APIs geoespaciales gratuitas (OSRM) para enrutamiento real sin depender de Google Directions, cómo controlar ciclos de vida en React mediante arreglos de dependencias en useEffect, y la importancia de validar coordenadas GPS contra valores por defecto de entornos emulados.
 
-
+### Entrada #14
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Diseñar e implementar las pantallas de inicio de sesión (Login) y registro (Register) con validación inline de errores (sin usar Alert, cumpliendo rúbrica) y extender el DriverContext para gestionar la sesión del usuario.
+Prompt: "Si, implementemos lo de DriverContext, pero lo de firebase no lo agregaré, ya que stiven probablemente ya tenga este archivo... quiero aplicar lo de los errores sin Alert..."
+Resumen de la respuesta: Se construyeron los componentes LoginScreen y RegisterScreen integrando validaciones locales por campo con mensajes de error en texto rojo bajo cada input, acatando la restricción de la rúbrica del proyecto sobre prohibir componentes Alert en formularios. Se actualizó DriverContext para incluir la variable de usuario (`user`), preparando la integración con la autenticación centralizada de Firebase que lidera el compañero del equipo.
+Qué se usó / modificó / descartó: Se descartó el uso de Alert nativo para notificar campos vacíos o credenciales incorrectas. Se crearon los estados de error individuales (`emailError`, `passwordError`, `nameError`) en src/screens/LoginScreen.js y src/screens/RegisterScreen.js. Se modificó src/context/DriverContext.js para añadir el estado global `user` y su función setter para el control de sesión.
+Archivos y commit: src/screens/LoginScreen.js, src/screens/RegisterScreen.js, src/context/DriverContext.js (Commit: fda21de)
+Verificación: Probado localmente en la interfaz. Al intentar enviar formularios vacíos o con datos erróneos, los inputs se marcan con borde rojo y despliegan los textos descriptivos de error debajo de cada uno de manera reactiva, sin interrumpir el flujo visual con pop-ups.
+Aprendizaje: Comprendí cómo estructurar validaciones de formularios UI/UX con mensajes inline personalizados en React Native, manteniendo el cumplimiento estricto de las reglas de diseño académicas y preparando estados globales escalables para la autenticación basada en tokens.
 
 
 
