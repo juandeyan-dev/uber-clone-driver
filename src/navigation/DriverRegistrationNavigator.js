@@ -1,25 +1,91 @@
-import React from 'react';
+// AI-assisted: see docs/AI_LOG.md #4, #13, #14, #15
+// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+// Navegador de pestañas de registro del conductor y manejo de envío de formularios con subida de imágenes a Cloudinary y sesión local.
+
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import PersonalDataTab from '../screens/driverRegistration/PersonalDataTab';
 import VehicleTab from '../screens/driverRegistration/VehicleTab';
 import DocumentsTab from '../screens/driverRegistration/DocumentsTab';
 import { RegistrationProvider, useRegistration } from '../screens/driverRegistration/RegistrationContext';
+import PendingApprovalScreen from '../screens/driverRegistration/PendingApprovalScreen';
 import { TabBarIndicator } from 'react-native-tab-view';
-
-//AI -assisted: see docs/AI_LOG.md #4
-// Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+import { uploadImageToCloudinary } from '../services/cloudinaryService';
+import { saveDriverRegistration } from '../services/driverService';
+import { useDriverSession } from '../context/DriverContext';
 
 const Tab = createMaterialTopTabNavigator();
 
 function RegistrationContent() {
     const { formIsComplete, form } = useRegistration();
+    const { startDriverSession } = useDriverSession();
+    const [submitted, setSubmitted] = useState(false);
 
-    function handleSubmit() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+
+    async function handleSubmit() {
+        console.log('🔍 [handleSubmit] Verificando formulario...');
+
         if (!formIsComplete) {
+            alert('El formulario aún está incompleto. Revisa que todos los campos y fotos estén listos.');
             return;
         }
-        console.log('Formulario listo para enviarse:', form);
+
+        if (isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        setSubmitError('');
+
+        try {
+            console.log('🚀 [handleSubmit] Iniciando subida de imágenes...');
+
+            const [
+                profilePhoto,
+                vehiclePhoto,
+                licensePhoto,
+                soatPhoto,
+                technicalReviewPhoto,
+            ] = await Promise.all([
+                uploadImageToCloudinary(form.personal.profilePhoto, 'drivers/profile'),
+                uploadImageToCloudinary(form.vehicle.vehiclePhoto, 'drivers/vehicle'),
+                uploadImageToCloudinary(form.documents.licensePhoto, 'drivers/license'),
+                uploadImageToCloudinary(form.documents.soatPhoto, 'drivers/soat'),
+                uploadImageToCloudinary(form.documents.technicalReviewPhoto, 'drivers/technical-review'),
+            ]);
+
+            console.log('✅ [handleSubmit] Imágenes subidas con éxito.');
+
+            const uploadedUrls = {
+                profilePhoto,
+                vehiclePhoto,
+                licensePhoto,
+                soatPhoto,
+                technicalReviewPhoto,
+            };
+
+            console.log('💾 [handleSubmit] Guardando en Firestore...');
+            const savedDriver = await saveDriverRegistration(form, uploadedUrls);
+
+            console.log('📱 [handleSubmit] Iniciando sesión...');
+            await startDriverSession(savedDriver.driverId);
+
+            console.log('🎉 [handleSubmit] ¡Todo exitoso!');
+            setSubmitted(true);
+        } catch (error) {
+            console.error('❌ [handleSubmit] Error capturado:', error);
+            alert(`Error: ${error.message}`);
+            setSubmitError(error?.message || 'No fue posible enviar el registro.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    if (submitted) {
+        return <PendingApprovalScreen />;
     }
 
     return (
@@ -47,19 +113,25 @@ function RegistrationContent() {
                     component={DocumentsTab}
                     options={{ title: 'Documentos' }}
                 />
-
             </Tab.Navigator>
+
+            {submitError ? (
+                <Text style={styles.submitError}>{submitError}</Text>
+            ) : null}
 
             <TouchableOpacity
                 style={[
                     styles.submitButton,
-                    !formIsComplete && styles.disabledButton,
+                    (!formIsComplete || isSubmitting) && styles.disabledButton,
                 ]}
-                disabled={!formIsComplete}
+                disabled={!formIsComplete || isSubmitting}
                 onPress={handleSubmit}
             >
-                <Text style={styles.submitText}>Enviar registro</Text>
+                <Text style={styles.submitText}>
+                    {isSubmitting ? 'Enviando registro...' : 'Enviar registro'}
+                </Text>
             </TouchableOpacity>
+
         </View>
     );
 }
@@ -84,6 +156,12 @@ const styles = StyleSheet.create({
     indicator: {
         backgroundColor: '#1976d2',
         height: 3,
+    },
+    submitError: {
+        marginHorizontal: 16,
+        marginBottom: 8,
+        color: '#c62828',
+        textAlign: 'center',
     },
     submitButton: {
         margin: 16,

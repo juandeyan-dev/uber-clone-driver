@@ -3,15 +3,15 @@ import pricing from '../config/pricing';
 // AI-assisted: see docs/AI_Log.md #7
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
 
-export function calcualteFare({
+export function calculateFare({
     distanceKm,
     durationMin,
     category,
-    tip=0,
+    tip = 0,
 }) {
     const multiplier = pricing.categoryMultipliers[category];
 
-    if (multiplier === undefine) {
+    if (multiplier === undefined) {
         throw new Error(`Categoria no valida: ${category}`);
     }
 

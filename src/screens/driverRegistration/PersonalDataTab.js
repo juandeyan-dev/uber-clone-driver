@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { useRegistration } from './RegistrationContext'; // AI-assistant: see docs/AI_LOG.md #8
+import { isAdult } from '../../utils/isAdult';
 
 // AI-assistant: see docs/AI_LOG.md #4, se agregan modificaciones #8
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
@@ -24,6 +26,14 @@ export default function PersonalDataTab() {
             message = 'Este campo es obligatorio';
         }
 
+        if (
+            field === 'birthDate' &&
+            value.trim() !== '' &&
+            !isAdult(value)
+        ) {
+            message = 'El conductor debe tener al menos 18 años';
+        }
+
         if (field === 'fullName' && value.length > 50) {
             message = 'El nombre completo no puede exceder los 50 caracteres';
         }
@@ -31,7 +41,7 @@ export default function PersonalDataTab() {
         if (
             field === 'fullName' &&
             value.trim() &&
-            !/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/.test(value)
+            !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(value)
         ) {
             message = 'El nombre solo puede tener letras y espacios';
         }
@@ -92,18 +102,58 @@ export default function PersonalDataTab() {
         validateFields('birthDate', formattedDate)
     }
 
+    async function selectProfilePhoto() {
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                profilePhoto: 'Se necesita permiso para seleccionar una imagen.',
+            }));
+
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets?.length > 0) {
+            updateField('profilePhoto', result.assets[0].uri);
+
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                profilePhoto: '',
+            }));
+        }
+    }
+
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Datos Personales</Text>
 
-            <Text style={styles.label}>Foto de perfil</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => updateField('profilePhoto', 'pendiente')}
+                onPress={selectProfilePhoto} // AI-assisted: see docs/AI_LOG.md #13
             >
-                <Text>Seleccionar Foto</Text>
-            </TouchableOpacity>
-            <Text style={styles.helperText}>La carga con Cloudinary se implementara despues.</Text>
+                <Text> 
+                    {personal.profilePhoto
+                        ? 'Cambiar foto de perfil' 
+                        : 'Seleccionar foto de perfil'}
+                </Text>
+            </TouchableOpacity> 
+
+            <ErrorMessage message={errors.profilePhoto} />
+
+            <Text style={styles.helperText}>
+                La imagen se selecciona localmente. La subida a Cloudinary se integrará después.
+            </Text>
+
 
             <Text style={styles.label}>Nombre completo</Text>
             <TextInput
@@ -112,7 +162,7 @@ export default function PersonalDataTab() {
                 onChangeText={(value) => handleChange('fullName', value)}
                 placeholder="Ejemplo: Stiven Hernandez"
             />
-            <ErrorMessage message={errors.fullName}/>
+            <ErrorMessage message={errors.fullName} />
 
             <Text style={styles.label}>Documento de identidad</Text>
             <TextInput
@@ -155,7 +205,8 @@ export default function PersonalDataTab() {
                     mode="date"
                     display="default"
                     maximumDate={new Date()}
-                    onChange={handleBirthDateChange}
+                    onValueChange={handleBirthDateChange}
+                    onDismiss={() => setShowBirthDatePicker(false)}
                 />
             )}
 

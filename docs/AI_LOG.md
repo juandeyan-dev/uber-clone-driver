@@ -513,11 +513,717 @@ Archivos y commit: package.json, src/components/FreeMap.js, src/screens/MapScree
 Verificación: Probado en dispositivo físico (Samsung Galaxy S23 Ultra) mediante Expo Go con túnel. El mapa de Medellín carga con calles reales, el marcador GPS ubica al conductor sin obstruir el badge de ganancias, y la pantalla ActiveTripScreen traza la línea de ruta entre origen y destino recorriendo los tres estados del viaje hasta sumar la tarifa.
 Aprendizaje: Comprendí cómo desacoplar dependencias propietarias de mapas mediante componentes WebView con librerías Open Source (Leaflet/OpenStreetMap) para eliminar costos de infraestructura en prototipos, además de estructurar layouts absolutos en React Native evitando superposición de controles.
 
+### Entrada #13
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Implementar trazado de rutas reales sobre la malla vial mediante OSRM según el estado del viaje, habilitar el ciclo continuo de solicitudes tras rechazar y corregir el desfase de coordenadas del emulador.
+Prompt: "Ahora, lo que quiero hacer es, será que podemos hacer que no lance una linea derecha de terminal del norte a lleras?... la ubicación de terminal del norte, no lanza exactamente en la terminal del norte... cuando le doy a rechazar a carrera, no me vuelve a lanzar la carrera... Ahora cuando le acepto la carrera, no me lanza mi dirección, hacia el punto de recogida, me sale es esto que te mandé en la foto..."
+Resumen de la respuesta: Se integró la API pública de OSRM dentro de FreeMap para dibujar rutas reales siguiendo las calles en lugar de líneas rectas, alternando dinámicamente los puntos entre Conductor -> Origen y Origen -> Destino según tripStatus. Se ajustaron las dependencias de useTripRequests para relanzar viajes cada 5 segundos al rechazar, se precisaron las coordenadas de la Terminal del Norte y se añadió un fallback en ActiveTripScreen para evitar que el GPS por defecto del emulador (California) rompiera el cálculo de la ruta en Medellín.
+Qué se usó / modificó / descartó: Se descartó el trazado en línea recta (L.polyline simple). Se modificó src/components/FreeMap.js para consumir router.project-osrm.org y renderizar GeoJSON. Se modificó src/services/useTripRequests.js ajustando originCoords (6.2778, -75.5712) y agregando incomingRequests al arreglo de dependencias del useEffect. Se modificó src/screens/ActiveTripScreen.js para inyectar coordenadas seguras de respaldo en Robledo si el GPS marca fuera de Colombia.
+Archivos y commit: src/components/FreeMap.js, src/screens/ActiveTripScreen.js, src/services/useTripRequests.js (Commit: 1aac246)
+Verificación: Probado en emulador Pixel 7 y dispositivo físico. Al rechazar una solicitud, llega otra automáticamente a los 5 segundos. Al aceptar, la ruta azul serpentea por las calles desde Robledo hasta la bahía de la Terminal del Norte y, al iniciar el viaje, recalcula la ruta vial hasta el Parque Lleras.
+Aprendizaje: Comprendí cómo consumir APIs geoespaciales gratuitas (OSRM) para enrutamiento real sin depender de Google Directions, cómo controlar ciclos de vida en React mediante arreglos de dependencias en useEffect, y la importancia de validar coordenadas GPS contra valores por defecto de entornos emulados.
+
+### Entrada #14
+Fecha: 2026-11-13
+Integrante: Juan Deyan Chaverra Urrea
+Herramienta: Gemini
+Objetivo: Diseñar e implementar las pantallas de inicio de sesión (Login) y registro (Register) con validación inline de errores (sin usar Alert, cumpliendo rúbrica) y extender el DriverContext para gestionar la sesión del usuario.
+Prompt: "Si, implementemos lo de DriverContext, pero lo de firebase no lo agregaré, ya que stiven probablemente ya tenga este archivo... quiero aplicar lo de los errores sin Alert..."
+Resumen de la respuesta: Se construyeron los componentes LoginScreen y RegisterScreen integrando validaciones locales por campo con mensajes de error en texto rojo bajo cada input, acatando la restricción de la rúbrica del proyecto sobre prohibir componentes Alert en formularios. Se actualizó DriverContext para incluir la variable de usuario (`user`), preparando la integración con la autenticación centralizada de Firebase que lidera el compañero del equipo.
+Qué se usó / modificó / descartó: Se descartó el uso de Alert nativo para notificar campos vacíos o credenciales incorrectas. Se crearon los estados de error individuales (`emailError`, `passwordError`, `nameError`) en src/screens/LoginScreen.js y src/screens/RegisterScreen.js. Se modificó src/context/DriverContext.js para añadir el estado global `user` y su función setter para el control de sesión.
+Archivos y commit: src/screens/LoginScreen.js, src/screens/RegisterScreen.js, src/context/DriverContext.js (Commit: fda21de)
+Verificación: Probado localmente en la interfaz. Al intentar enviar formularios vacíos o con datos erróneos, los inputs se marcan con borde rojo y despliegan los textos descriptivos de error debajo de cada uno de manera reactiva, sin interrumpir el flujo visual con pop-ups.
+Aprendizaje: Comprendí cómo estructurar validaciones de formularios UI/UX con mensajes inline personalizados en React Native, manteniendo el cumplimiento estricto de las reglas de diseño académicas y preparando estados globales escalables para la autenticación basada en tokens.
 
 
 
 
 
 
+### Entrada #8
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Verificar la versión de Expo e integrar un selector real para la fecha de nacimiento en el formulario de datos personales del conductor.
+
+- Prompt: 
+
+  "Verifiquemos la versión de Expo en package.json para elegir el selector de fechas adecuado."
+
+  "recuerda tener eso en cuenta para la siguiente entrada #"
+
+  "PS D:\Dev\5SEMESTRE\desarollo movil\uber-clone-driver> Get-Content package.json
+
+  {
+    "name": "uber-clone-driver",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+      "@react-navigation/material-top-tabs": "^7.8.1",
+      "@react-navigation/native": "^7.5.1",
+      "@react-navigation/stack": "^7.12.1",
+      "expo": "~57.0.31",
+      "expo-status-bar": "~57.0.1",
+      "react": "19.2.3",
+      "react-native": "0.86.3",
+      "react-native-gesture-handler": "~2.32.0",
+      "react-native-pager-view": "8.0.2",
+      "react-native-safe-area-context": "~5.7.0",
+      "react-native-screens": "~4.26.0",
+      "react-native-tab-view": "^4.3.4"
+    },
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    },
+    "private": true
+  }
+
+  PS D:\Dev\5SEMESTRE\desarollo movil\uber-clone-driver> npx expo install @react-native-community/datetimepicker
+
+  › Installing 1 SDK 57.0.0 compatible native module using npm
+  > npm install
+
+  added 1 package, and audited 497 packages in 8s
+
+  47 packages are looking for funding
+    run `npm fund` for details
+
+  10 vulnerabilities (1 low, 7 moderate, 2 high)
+
+  To address issues that do not require attention, run:
+    npm audit fix
+
+  To address all issues (including breaking changes), run:
+    npm audit fix --force
+
+  Run `npm audit` for details.
+  › Added config plugin: @react-native-community/datetimepicker
+
+  esto salio, y ten en cuenta los promts para que no piensen que me los invento aunque ya ni se si leera tanto jajaaja"
+
+  "si salieron esos archivos modificados unicamente, sigamos"
+
+  "puse 5555555 en la parte de fecha de nacimiento y no paso nada"
+
+  "me salio un error al emular mira
+
+  Render Error: Property 'errors' doesn't exist
+
+  En PersonalDataTab.js se intentaba utilizar errors en el componente ErrorMessage, pero errors no estaba declarado correctamente."
+
+  "perfecto ahora si funciona lo de fecha"
+
+- Resumen de la respuesta: Se verificó que el proyecto utiliza Expo SDK 57, específicamente `expo: ~57.0.31`, junto con React 19.2.3 y React Native 0.86.3. Se recomendó instalar `@react-native-community/datetimepicker` mediante `npx expo install` para obtener una versión compatible con el SDK.
+
+  Después se integró el selector de fecha en `PersonalDataTab.js`. La fecha seleccionada se formatea como `YYYY-MM-DD` y se guarda en el estado compartido del formulario. Durante la prueba apareció el error `Property 'errors' doesn't exist`, que se corrigió declarando el estado local `errors` dentro de `PersonalDataTab`.
+
+- Qué se usó / modificó / descartó: Se utilizó `@react-native-community/datetimepicker` para reemplazar el campo de texto manual de fecha de nacimiento. Se agregaron `formatDate`, `handleBirthDateChange`, el estado `showBirthDatePicker` y los estilos del botón de fecha.
+
+  También se agregó el plugin de configuración de `@react-native-community/datetimepicker` en `app.json`. Se corrigió el estado local `errors` sin trasladarlo al contexto global, porque los mensajes de validación pertenecen a cada pestaña del formulario.
+
+  No se implementó todavía la validación de mayoría de edad; esa corresponde a la siguiente tarea. Tampoco se ejecutó `npm audit fix --force`, porque podía introducir actualizaciones incompatibles y no era necesario para esta funcionalidad.
+
+- Archivos y commit: 
+
+  - `app.json`
+  - `package.json`
+  - `package-lock.json`
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `docs/AI_LOG.md`
+  - Commit: `3a52325`
+
+- Verificación: Se confirmó la versión `expo: ~57.0.31` en `package.json`. La dependencia se instaló correctamente mediante `npx expo install @react-native-community/datetimepicker`, y Expo agregó el plugin correspondiente.
+
+  En la aplicación se comprobó que el botón de selección abriera el calendario nativo, que la fecha escogida se mostrara en formato `YYYY-MM-DD` y que la aplicación dejara de mostrar el error relacionado con la variable `errors`.
+
+  También se verificó que una entrada manual como `5555555` no modificara el campo, porque el control ya no es un `TextInput`, sino un selector de fecha. El commit se publicó en la rama `stiven` mediante `git push`.
+
+- Aprendizaje: Entendí que las dependencias nativas de Expo deben instalarse con `npx expo install` para conservar la compatibilidad con el SDK del proyecto. También comprendí que un selector de fecha debe guardar un valor normalizado y que el estado local `errors` debe declararse antes de utilizarlo en los mensajes de validación.
+
+- Próximo paso: Validar que la fecha de nacimiento seleccionada corresponda a una persona mayor o igual a 18 años.
+
+### Entrada #9
+
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar la validación de edad mínima de 18 años para el registro del conductor y conectar esa validación con el estado general del formulario.
+
+- Prompt: 
+
+  "vale, siguiente entrada # vamos con la verificacion de la edad minima"
+
+  "el boton nisiquiera se habilida porque no se ah modificado eso aun y el calendario si se limita hasta la fecha actual porcierto la consola lanzo esto
+
+  N DateTimePicker: `onChange` is deprecated. Use `onValueChange`, `onDismiss`, and `onNeutralButtonPress` instead."
+
+  "todo eso existe, se te olvida que debes revisar el git cada momento? ademas como dices que no existe si lo creamos juntos sea serio"
+
+  "On branch stiven
+  Your branch is up to date with 'origin/stiven'.
+
+  Changes not staged for commit:
+  modified: docs/AI_LOG.md
+  modified: src/screens/driverRegistration/PersonalDataTab.js
+  modified: src/screens/driverRegistration/RegistrationContext.js
+
+  Untracked files:
+  src/utils/isAdult.js"
+
+- Resumen de la respuesta: Manus explicó que la validación de edad debía conectarse tanto a `PersonalDataTab.js`, para mostrar el error debajo de la fecha, como a `RegistrationContext.js`, para impedir que el formulario se considerara completo cuando el conductor fuera menor de edad. También se indicó reemplazar la prop depreciada `onChange` de `DateTimePicker` por `onValueChange` y `onDismiss`.
+
+- Qué se usó / modificó / descartó: Se creó `src/utils/isAdult.js` como función reutilizable para calcular correctamente la edad, considerando si la persona ya cumplió años durante el año actual. Se utilizó esta función en `PersonalDataTab.js` y `RegistrationContext.js`. También se mantuvo la restricción `maximumDate={new Date()}` del selector y se reemplazó el callback depreciado `onChange` por `onValueChange` y `onDismiss`. No se modificó el contexto de Juan ni ninguna funcionalidad de mapa, GPS, viajes o pagos.
+
+- Archivos y commit:
+
+  - `src/utils/isAdult.js`
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `7c0aaa4`
+
+- Verificación: Se comprobó que el calendario no permite seleccionar fechas posteriores a la fecha actual. Se probó una fecha correspondiente a una persona menor de 18 años y se verificó que apareciera el mensaje de error y que el formulario permaneciera incompleto. También se probó una fecha de una persona mayor de 18 años y se verificó que la validación de edad fuera aceptada. Se comprobó que la advertencia relacionada con `onChange` desapareciera después de utilizar `onValueChange` y `onDismiss`.
+
+- Aprendizaje: Entendí que calcular la edad no consiste únicamente en restar el año de nacimiento al año actual, porque también se debe comprobar si la persona ya cumplió años. También aprendí que la validación visual del campo y la validación general del formulario son responsabilidades distintas: una muestra el error y la otra controla si el botón puede habilitarse.
+
+### Entrada #10
+- Fecha: 2026-11-05
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Integrar selectores de fecha para los vencimientos de la licencia de conducción, el SOAT y la revisión técnico-mecánica.
+- Prompt: "vale siguiente entrada hagamos y completemos el otro punto de la lista, iniciamos desde aca"
+- Prompt adicional: "me salio error total al intentar emular emm mira
+  La imagen muestra una pantalla roja de error de desarrollo con el mensaje `The development server returned response error code: 500`. El error indica `Unable to resolve module .@react-native-community/datetimepicker` en el archivo `src/screens/driverRegistration/DocumentsTab.js`. La librería no se pudo encontrar debido a un problema en el import."
+- Prompt adicional: "funcionando correctamente ahora si"
+- Prompt adicional: "todo correcto, has la entrada 10 ya yo me encargo de cambiarlo"
+- Resumen de la respuesta: Manus revisó el archivo `DocumentsTab.js` y propuso reemplazar los campos de texto manuales de las fechas de vencimiento por selectores nativos utilizando `@react-native-community/datetimepicker`.
+- Se implementó un selector reutilizable para los tres documentos. El campo activo se controla mediante el estado `activeDateField`, lo que permite utilizar un solo componente `DateTimePicker` para seleccionar la fecha de vencimiento de la licencia, el SOAT o la revisión técnico-mecánica. Las fechas seleccionadas se convierten al formato `YYYY-MM-DD` y se guardan mediante `updateSection` en el contexto de registro.
+- Qué se usó / modificó / descartó: Se utilizó la dependencia `@react-native-community/datetimepicker`, instalada previamente con Expo.
+- En `DocumentsTab.js` se agregaron:
+  - El import de `DateTimePicker`.
+  - El estado `activeDateField`.
+  - La función `formatDate`.
+  - La función `getDateValue`.
+  - La función `handleExpirationDateChange`.
+  - La función reutilizable `renderDatePicker`.
+  - Los estilos `dateButton` y `dateButtonText`.
+- Se reemplazaron los campos `TextInput` de:
+  - `licenseExpiration`.
+  - `soatExpiration`.
+  - `technicalReviewExpiration`.
+- Durante la prueba apareció un error de resolución del módulo debido a un punto adicional en el import:
+  ```js
+  .@react-native-community/datetimepicker
+
+El error se corrigió utilizando el nombre correcto del paquete:
+
+@react-native-community/datetimepicker
+
+No se modificó el trabajo correspondiente a Juan. Tampoco se implementó todavía la validación de que las fechas sean posteriores a la fecha actual, porque esa corresponde al siguiente punto de la lista.
+
+Archivos y commit:
+
+src/screens/driverRegistration/DocumentsTab.js
+
+docs/AI_LOG.md
+
+Commit: 9c0ef5a
+
+Verificación: Se ejecutó la aplicación con Expo y se confirmó que el selector de fecha se abre correctamente desde los tres campos de documentos. Se probó la selección de la fecha de vencimiento de la licencia, del SOAT y de la revisión técnico-mecánica. Se comprobó que cada fecha se guardara en su campo correspondiente y se mostrara con el formato YYYY-MM-DD. También se comprobó que, después de corregir el import de @react-native-community/datetimepicker, la aplicación volviera a iniciar correctamente sin el error de Metro relacionado con la resolución del módulo. En esta etapa todavía es posible seleccionar fechas anteriores a la fecha actual. Esa restricción queda pendiente para la siguiente tarea.
+
+Aprendizaje: Entendí que un solo componente DateTimePicker puede reutilizarse para varios campos si se guarda en el estado cuál campo está activo. También comprendí que las fechas seleccionadas deben convertirse a un formato uniforme antes de almacenarse en el formulario. Además, aprendí que los imports de paquetes deben escribirse exactamente con el nombre del módulo instalado y que un punto adicional puede hacer que Metro interprete incorrectamente la ruta de la dependencia.
+
+Próximo paso: Validar que las fechas de vencimiento de la licencia, el SOAT y la revisión técnico-mecánica sean posteriores a la fecha actual.
+
+### Entrada #11
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Revisar, corregir y completar la validación de las fechas de vencimiento de la licencia de conducción, el SOAT y la revisión técnico-mecánica.
+
+- Prompt: "holaaa, me quede pausado mucho tiempo con el proyecto... debemos acabarlo hoy mismo en menos de 12 horas iwi lo ves conseguible? quiero aumentar el ritmo, haremos de a 3 tareas luego commit"
+
+- Prompt adicional: "ya yo me encargo de cambiarlo"
+
+- Prompt adicional: "vale siguiente entrada hagamos y completemos el otro punto de la lista, iniciamos desde aca"
+
+- Prompt adicional: "oye revisa bien eso me estas poniendo cosas que ya estan"
+
+- Prompt adicional: "Ya realicé las correcciones y probé Expo. Muéstrame el git diff para verificar los cambios antes del commit de la Entrada #11."
+
+- Prompt adicional: "esta muy largo para mandarlo pero funcionaron correctamente"
+
+- Resumen de la respuesta: Manus revisó el historial del repositorio y confirmó que los selectores de vencimiento de licencia, SOAT y revisión técnico-mecánica ya habían sido implementados previamente en el commit `9c0ef5a`. Por esta razón, no se volvió a crear esa funcionalidad desde cero.
+
+  Durante la revisión se identificaron y corrigieron errores existentes en `DocumentsTab.js`: el nombre incorrecto `lincenseExpiration`, el uso de `styles` en lugar de `style` en el botón del SOAT y los estilos inexistentes `dataButton` y `dataButtonText` utilizados en el campo de revisión técnico-mecánica.
+
+  También se completó la validación de vencimientos. Se estableció una fecha mínima posterior al día actual en el selector y se agregó una función para validar las fechas guardadas antes de considerar completo el formulario.
+
+- Qué se usó / modificó / descartó: Se mantuvo el componente `DateTimePicker` y la lógica existente basada en `activeDateField`, `formatDate`, `getDateValue`, `handleExpirationDateChange` y `renderDatePicker`.
+
+  Se corrigieron los nombres y estilos de los tres selectores:
+
+  - `licenseExpiration`
+  - `soatExpiration`
+  - `technicalReviewExpiration`
+
+  En `DocumentsTab.js` se agregó la restricción `minimumDate` para impedir la selección de fechas anteriores o iguales a la fecha actual.
+
+  En `RegistrationContext.js` se agregó la función `isExpirationDateValid` y se conectó la validación de las fechas de licencia y SOAT con `formIsComplete`.
+
+  No se modificaron los módulos de mapas, GPS, solicitudes de viaje, viaje activo ni pagos pertenecientes al trabajo de Juan. Tampoco se creó nuevamente la funcionalidad de selectores que ya existía.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `c9fe7e`
+
+- Verificación: Se ejecutó la aplicación con Expo y se confirmó que inició correctamente sin errores.
+
+  Se verificó que los selectores de vencimiento de licencia, SOAT y revisión técnico-mecánica abrieran correctamente y conservaran las fechas seleccionadas en formato `YYYY-MM-DD`.
+
+  También se comprobó que los selectores no permitieran elegir fechas anteriores o iguales al día actual. La validación del contexto impide que las fechas inválidas sean consideradas suficientes para completar el formulario.
+
+  Finalmente, se ejecutaron las revisiones de Git correspondientes antes del commit:
+
+  ```powershell
+  git diff --check
+  git diff --cached --check
+
+- Aprendizaje: Entendí que antes de implementar una funcionalidad debo revisar el historial y el estado real del repositorio para evitar duplicar código. También comprendí que la validación visual del DateTimePicker debe complementarse con una validación en el contexto del formulario, porque los datos también pueden llegar desde otros medios. Además, aprendí que pequeños errores como escribir lincenseExpiration en lugar de licenseExpiration, utilizar styles en vez de style o referenciar estilos inexistentes pueden impedir que una funcionalidad ya implementada opere correctamente.
+
+Próximo paso: Continuar con el siguiente bloque de validaciones del formulario del conductor.
 
 
+### Entrada #12
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Apellido
+- Herramienta: Manus
+- Objetivo: Completar el Bloque 2 de validaciones del formulario del conductor sin duplicar funcionalidades que ya existían en el repositorio.
+
+- Prompt: "vamos entoces con el bloque 2, y inicia la siguiente entrada"
+
+- Prompt adicional: "oye revisa bien eso me estas poniendo cosas que ya estan"
+
+- Prompt adicional: "iniciemos entoces"
+
+- Prompt adicional: "todo funciona correctamente dame la entrada 12"
+
+- Resumen de la respuesta: Manus revisó el estado actual de la rama `stiven` y analizó `VehicleTab.js`, `DocumentsTab.js` y `RegistrationContext.js` antes de proponer cambios. Durante la revisión se confirmó que varias validaciones ya existían: conversión de la placa a mayúsculas, formato colombiano `ABC123`, límite de 30 caracteres para marca y modelo, validación inicial de cuatro dígitos para el año, mínimo de seis pasajeros para la categoría XL, correo de Mercado Pago, aceptación de términos y comisión visible del 20 %.
+
+  Para evitar duplicar código, el trabajo se concentró en completar y corregir las validaciones faltantes del formulario.
+
+- Qué se usó / modificó / descartó:
+
+  En `VehicleTab.js` se realizaron los siguientes ajustes:
+
+  - Se eliminó el import no utilizado `Touchable`.
+  - Se agregó la referencia de la Entrada #12.
+  - Se normalizaron los campos de año y capacidad para aceptar únicamente números.
+  - Se agregó la validación para impedir que el año del vehículo sea superior al año actual.
+  - Se creó una función para validar la categoría XL al momento de seleccionarla.
+  - Se mantuvo la exigencia de mínimo seis pasajeros para vehículos XL.
+  - Se conservaron las validaciones existentes de placa, marca, modelo y campos obligatorios.
+
+  En `DocumentsTab.js` se realizaron los siguientes ajustes:
+
+  - Se eliminó el import no utilizado `use`.
+  - Se eliminó el estado `showLicensePicker`, porque el selector utiliza `activeDateField`.
+  - Se corrigió el uso de `styles` por `style` en el botón del SOAT.
+  - Se agregó la referencia de la Entrada #12.
+  - Se conservaron las validaciones existentes del correo de Mercado Pago, los documentos y la aceptación visible de la comisión del 20 %.
+
+  En `RegistrationContext.js` se realizó el siguiente ajuste:
+
+  - Se agregó la referencia de la Entrada #12.
+  - Se incluyó la fecha de vencimiento de la revisión técnico-mecánica dentro de `formIsComplete`.
+  - El formulario ahora exige fechas futuras válidas para licencia, SOAT y revisión técnico-mecánica.
+
+  No se modificaron los archivos correspondientes al mapa, GPS, solicitudes de viaje, viaje activo ni pagos pertenecientes al trabajo de Juan Deyan.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/VehicleTab.js`
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `docs/AI_LOG.md`
+  - Commit: `cfcb1c2`
+
+- Verificación: Se ejecutó Expo con la aplicación actualizada y se comprobó que funcionara correctamente.
+
+  Se verificó que:
+
+  - El año del vehículo no aceptara valores superiores al año actual.
+  - Los campos de año y capacidad eliminaran caracteres no numéricos.
+  - La categoría XL mostrara un error cuando la capacidad fuera menor de seis pasajeros.
+  - La capacidad de seis pasajeros o más eliminara el error correspondiente.
+  - La fecha de revisión técnico-mecánica fuera necesaria para completar el formulario.
+  - El botón del SOAT conservara su estilo correcto.
+  - Los campos de documentos y la aceptación de la comisión del 20 % siguieran funcionando.
+  - La aplicación iniciara sin errores en Expo.
+  - `git diff --check` quedara sin errores de espacios finales.
+
+- Aprendizaje: Aprendí que antes de agregar una validación es necesario revisar el código existente para no duplicar lógica ni sobrescribir el trabajo anterior. También comprendí que una validación debe ejecutarse tanto cuando se modifica un campo como cuando cambia un campo relacionado, como ocurre con la categoría XL y la capacidad de pasajeros.
+
+  Además, aprendí a diferenciar errores funcionales de errores de formato detectados por `git diff --check`, como los espacios sobrantes al final de una línea.
+
+- Estado del bloque: Bloque 2 completado y probado correctamente.
+
+- Próximo paso: Crear el commit de este bloque, actualizar el hash real en esta entrada y continuar con el Bloque 3 relacionado con fotografías, selección de imágenes y flujo de aprobación.
+
+### Entrada #13
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Apellido
+- Herramienta: Manus
+- Objetivo: Implementar la selección de fotografías obligatorias del conductor, validar su existencia antes del envío y crear el flujo de registro pendiente de aprobación con `isApproved: false`.
+
+- Prompt: "Iniciemos con el Bloque 3 y redacta la Entrada #13."
+
+- Prompts adicionales:
+  - "funcionando correctamente :D sigamos"
+  - "Todo funciona correctamente, continuemos con la Tarea 3 del Bloque 3: fotos de licencia, SOAT y revisión técnico-mecánica."
+  - "funciona correctamente wi"
+  - "Todo validado correctamente para la Tarea 4. Pasemos a la Tarea 5: flujo de pendiente de aprobación e isApproved: false."
+  - "funcionando correctamente... y esas cosas de base de datos y demas, tambien las debo hacer recuerda, si es necesario integrarlas ya lo hacemos tu diras en que momento es ideal empezar con eso"
+
+- Resumen de la respuesta: Manus revisó la estructura existente del registro y confirmó que los botones de fotografías utilizaban valores simulados como `pendiente`. Se implementó la selección real de imágenes mediante `expo-image-picker`, guardando temporalmente las URI locales dentro del contexto del formulario.
+
+  Se agregaron selectores para la foto de perfil, la foto del vehículo, la licencia de conducción, el SOAT y la revisión técnico-mecánica. También se incorporó una pantalla de estado pendiente de aprobación y se estableció el valor inicial `isApproved: false`.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló y utilizó `expo-image-picker`.
+  - Se agregó selección de imagen para la foto de perfil en `PersonalDataTab.js`.
+  - Se agregó selección de imagen para la foto del vehículo en `VehicleTab.js`.
+  - Se agregó una función reutilizable para seleccionar las fotos de licencia, SOAT y revisión técnico-mecánica en `DocumentsTab.js`.
+  - Se almacenaron las URI locales de las imágenes en el contexto del registro.
+  - Se actualizaron las validaciones de `formIsComplete` para exigir las cinco fotografías obligatorias.
+  - Se agregó `isApproved: false` al formulario inicial.
+  - Se creó `PendingApprovalScreen.js`.
+  - Se actualizó `DriverRegistrationNavigator.js` para mostrar la pantalla de pendiente después de enviar un registro válido.
+  - Se mantuvo visible el mensaje de comisión de plataforma del 20 %.
+  - No se modificaron los módulos de mapas, GPS, solicitudes de viaje ni viaje activo pertenecientes a Juan Deyan.
+  - La subida real a Cloudinary y la persistencia en Firestore/MongoDB quedaron pendientes para el siguiente bloque, debido a que todavía deben confirmarse la configuración y las credenciales seguras del proyecto.
+  - No se guardaron credenciales reales dentro del código.
+
+- Archivos y commit:
+
+  - `src/screens/driverRegistration/PersonalDataTab.js`
+  - `src/screens/driverRegistration/VehicleTab.js`
+  - `src/screens/driverRegistration/DocumentsTab.js`
+  - `src/screens/driverRegistration/RegistrationContext.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `src/screens/driverRegistration/PendingApprovalScreen.js`
+  - `docs/AI_LOG.md`
+  - Commit: `b94675a`
+
+- Verificación: Se ejecutó la aplicación con Expo y se comprobó que:
+
+  - La galería se abriera correctamente para seleccionar imágenes.
+  - La foto de perfil pudiera seleccionarse y cambiarse.
+  - La foto del vehículo pudiera seleccionarse y cambiarse.
+  - Las fotos de licencia, SOAT y revisión técnico-mecánica pudieran seleccionarse y cambiarse.
+  - Cancelar la selección no generara errores.
+  - El formulario permaneciera incompleto mientras faltara alguna fotografía obligatoria.
+  - El botón de envío solo se habilitara al completar los datos, las fechas, las fotografías y la aceptación de la comisión.
+  - Al enviar el registro válido apareciera la pantalla de pendiente de aprobación.
+  - El estado inicial y el objeto enviado conservaran `isApproved: false`.
+  - La aplicación funcionara correctamente en Expo.
+
+- Aprendizaje: Aprendí a reutilizar una función para seleccionar diferentes fotografías sin duplicar la misma lógica. También comprendí que una URI local permite probar la selección de imágenes, pero no equivale a una subida real a Cloudinary.
+
+  Además, entendí que `isApproved: false` debe establecerse desde la creación del perfil y que el conductor no puede cambiar ese valor desde la aplicación. La persistencia en una base de datos y la carga real de imágenes se implementarán de forma segura en el siguiente bloque.
+
+- Estado del bloque: Bloque 3 completado y probado correctamente en su parte local.
+
+- Próximo paso: Confirmar la configuración del proyecto e integrar la persistencia del perfil del conductor con `isApproved: false`, además de definir el almacenamiento seguro de las imágenes.
+
+
+### Entrada #14
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Integrar Firebase/Firestore y Cloudinary al flujo de registro del conductor, guardar el perfil completo con `isApproved: false` y reemplazar las URI locales de las imágenes por URLs permanentes de Cloudinary.
+
+- Prompt: "¿Cómo empezamos con la integración de la base de datos y Cloudinary?"
+
+- Prompts adicionales:
+  - "Ya tengo todo configurado: credenciales reales de Firebase y Cloudinary en el .env, y Firestore activo. Por favor, avanza directamente con la Tarea 4: dame el código exacto para crear src/services/driverService.js y guardar el registro completo en Firestore con isApproved: false y las URLs de Cloudinary."
+  - "Ya creé src/services/firebase.js con el código indicado y el git status --short muestra correctamente ?? src/services/firebase.js."
+  - "Ya creé y verifiqué los tres servicios en src/services/ (firebase.js, cloudinaryService.js, driverService.js). El .env está correctamente ignorado. Por favor, dime cuál es el siguiente paso para conectar ambos servicios al botón de Enviar registro en el formulario."
+  - "Ya modifiqué src/navigation/DriverRegistrationNavigator.js integrando uploadImageToCloudinary y saveDriverRegistration, actualicé el botón con los estados de carga/error y añadí el estilo. Reinicié Expo con caché limpia y probé el flujo completo."
+
+- Resumen de la respuesta: Manus guió la configuración de Firebase y Cloudinary, detectó que `.env` estaba siendo rastreado por Git y explicó cómo retirarlo del índice sin eliminarlo localmente. También indicó cómo proteger las variables de entorno mediante `.gitignore` y `.env.example`.
+
+  Se crearon servicios separados para inicializar Firebase/Firestore, subir imágenes a Cloudinary mediante un upload preset unsigned y guardar el perfil del conductor. El servicio de Firestore genera un identificador para el conductor y establece `isApproved: false`.
+
+  Finalmente, se conectó el botón `Enviar registro` para subir en paralelo las cinco fotografías, obtener sus URLs `secure_url`, guardar el perfil en Firestore y mostrar `PendingApprovalScreen` únicamente después de completar correctamente ambas operaciones.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló la dependencia `firebase`.
+  - Se conservó `expo-image-picker` para seleccionar imágenes localmente.
+  - Se retiró `.env` del control de versiones con `git rm --cached .env`.
+  - Se actualizaron `.gitignore` y `.env.example`.
+  - Se creó `src/services/firebase.js`.
+  - Se creó `src/services/cloudinaryService.js`.
+  - Se creó `src/services/driverService.js`.
+  - Se modificó `src/navigation/DriverRegistrationNavigator.js`.
+  - Se utilizó `Promise.all` para subir las cinco imágenes en paralelo.
+  - Se agregaron estados visibles de carga y error al botón de envío.
+  - Se estableció `isApproved: false` al guardar el perfil.
+  - No se incluyeron contraseñas, cuentas bancarias, números de tarjetas ni secretos administrativos.
+  - No se modificaron los módulos de mapas, GPS ni viajes pertenecientes a Juan Deyan.
+
+- Archivos y commit:
+
+  - `.gitignore`
+  - `.env.example`
+  - `package.json`
+  - `package-lock.json`
+  - `src/services/firebase.js`
+  - `src/services/cloudinaryService.js`
+  - `src/services/driverService.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `docs/AI_LOG.md`
+  - Commit: `c69fe80`
+
+- Verificación: Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+
+-La prueba completa confirmó que:
+
+Las cinco imágenes se subieron correctamente a Cloudinary.
+
+Cloudinary devolvió URLs permanentes secure_url.
+
+Se creó correctamente el documento del conductor en la colección drivers de Firestore.
+
+El documento guardó isApproved: false.
+
+Las URI locales fueron reemplazadas por URLs de Cloudinary.
+
+El botón mostró el estado Enviando registro....
+
+El botón no permitió envíos duplicados durante la operación.
+
+Los errores de subida o guardado se mostraron en la interfaz.
+
+La aplicación pasó correctamente a PendingApprovalScreen.
+
+El archivo .env permaneció local y no rastreado por Git.
+
+Aprendizaje: Aprendí que las URI locales de una imagen no deben guardarse como URLs definitivas en Firestore. Primero deben convertirse en URLs remotas mediante Cloudinary.
+
+También comprendí la importancia de separar responsabilidades: Firebase inicializa la conexión, Cloudinary gestiona las imágenes y driverService guarda el perfil. Además, isApproved debe comenzar en false y no puede ser cambiado por el conductor desde la aplicación.
+
+Estado del bloque: Integración de Firebase, Firestore y Cloudinary completada y probada correctamente.
+
+Próximo paso: Implementar la lectura del perfil y el bloqueo persistente del acceso al mapa y a la disponibilidad cuando isApproved !== true.
+
+### Entrada #15
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar la persistencia del identificador del conductor con AsyncStorage, leer el perfil desde Firestore en tiempo real y bloquear el acceso al mapa y a la disponibilidad mientras `isApproved !== true`.
+
+- Prompt: "Ya confirmé localmente que estoy en la rama stiven, el árbol está limpio y todo el código de la Entrada #14 está subido en GitHub. Avancemos con la implementación de la Entrada #15: instalar AsyncStorage, guardar y leer el driverId, suscribirnos en tiempo real al documento drivers/{driverId} con onSnapshot y bloquear el acceso al mapa hasta que isApproved sea true."
+
+- Prompts adicionales:
+
+  - "Dime el comando exacto para instalar @react-native-async-storage/async-storage con Expo."
+  - "Dame el código exacto para actualizar src/services/driverService.js, conservando los comentarios y el estilo existente."
+  - "¿Qué contexto y pantalla de navegación debemos modificar para bloquear el acceso al mapa mientras isApproved !== true?"
+  - "Varias partes del código ya tienen comentarios hechos por mí. Mantenlos, sigue el estilo que tienen dentro de Git y adapta lo que me des."
+
+- Resumen de la respuesta: Manus explicó cómo instalar AsyncStorage mediante `npx expo install @react-native-async-storage/async-storage` y propuso ampliar `driverService.js` para guardar, recuperar y eliminar el `driverId` de la sesión.
+
+  También se propuso utilizar `onSnapshot` de Firebase para escuchar en tiempo real el documento `drivers/{driverId}`. De esta forma, la aplicación puede detectar cuando el administrador cambia el campo `isApproved` de `false` a `true` sin depender de reiniciar la aplicación.
+
+  Se propuso ampliar `DriverContext.js` para centralizar el `driverId`, el perfil del conductor, el estado de carga, los errores y el estado de aprobación. El contexto debe activar la disponibilidad únicamente cuando el perfil exista y `isApproved === true`.
+
+  Para proteger el acceso operativo, se propuso modificar `App.js` y colocar una pantalla de carga, una pantalla de registro, `PendingApprovalScreen` o la navegación del mapa según el estado de la sesión. De esta manera, `MapScreen` no se monta mientras el perfil está pendiente de aprobación.
+
+  La implementación se adaptó al estilo existente del repositorio y se conservaron los comentarios previos realizados por el integrante, incluidos los comentarios que relacionan el código asistido con las entradas anteriores de `docs/AI_LOG.md`.
+
+- Qué se usó / modificó / descartó:
+
+  - Se instaló `@react-native-async-storage/async-storage` mediante Expo.
+  - Se conservó Firebase/Firestore como fuente de verdad para el campo `isApproved`.
+  - Se propuso guardar únicamente el `driverId` en AsyncStorage.
+  - Se propuso agregar funciones para guardar, leer y eliminar el `driverId`.
+  - Se propuso agregar una suscripción con `onSnapshot` al documento `drivers/{driverId}`.
+  - Se propuso ampliar `DriverContext.js` para administrar la sesión y el perfil del conductor.
+  - Se propuso llamar la función de inicio de sesión después de guardar correctamente el registro en Firestore.
+  - Se propuso modificar `App.js` para controlar la navegación según el estado de aprobación.
+  - Se mantuvieron los comentarios existentes escritos por el integrante.
+  - No se guardaron datos bancarios, números de tarjetas, credenciales privadas ni el perfil completo en AsyncStorage.
+  - No se utilizó AsyncStorage como fuente de verdad para `isApproved`.
+  - No se modificó la lógica interna de mapas, GPS, solicitudes de viaje ni viajes pertenecientes a Juan Deyan.
+  - No se permitió que el conductor cambiara `isApproved` desde la aplicación.
+
+- Archivos y commit:
+
+  - `package.json`
+  - `package-lock.json`
+  - `src/services/driverService.js`
+  - `src/context/DriverContext.js`
+  - `src/navigation/DriverRegistrationNavigator.js`
+  - `App.js`
+  - `docs/AI_LOG.md`
+  - Commit: `INSERTAR_AQUI_HASH_CORTO`
+
+- Verificación:
+
+  Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+  git diff --check
+  git status
+
+La verificación debe confirmar que:
+-La aplicación muestre el registro cuando no existe un driverId guardado.
+-Después de enviar el registro, el driverId se guarde en AsyncStorage.
+-El documento del conductor se lea desde drivers/{driverId}.
+-La aplicación muestre PendingApprovalScreen cuando isApproved sea false.
+-El mapa no se monte mientras la cuenta esté pendiente.
+-El cambio de isApproved de false a true sea detectado mediante onSnapshot.
+-El mapa se habilite únicamente cuando isApproved === true.
+-La disponibilidad permanezca desactivada mientras la cuenta no esté aprobada.
+-Si isApproved vuelve a false, la disponibilidad se desactive y se bloquee nuevamente el acceso operativo.
+-La aplicación muestre un estado de error cuando el documento no exista o falle la lectura de Firestore.
+-Los módulos de mapas, GPS y viajes continúen sin modificaciones funcionales.
+
+- Aprendizaje: Aprendí que AsyncStorage debe utilizarse únicamente para conservar el identificador necesario para restaurar la sesión, pero no debe reemplazar a Firestore como fuente de verdad del estado de aprobación.
+También comprendí que onSnapshot permite reaccionar a los cambios realizados en Firestore en tiempo real. La navegación debe esperar a conocer el estado del perfil antes de montar el mapa, porque deshabilitar solamente el interruptor de disponibilidad no impide que se monten los hooks relacionados con la ubicación y las solicitudes.
+Además, aprendí que el contexto permite centralizar la sesión del conductor y evitar que cada pantalla mantenga su propia versión de isApproved.
+
+- Estado del bloque: Bloque 4 completado y probado correctamente.
+
+Próximo paso: Ejecutar todas las pruebas de sesión, aprobación y bloqueo del mapa, actualizar el hash real del commit y confirmar que únicamente se modificaron los archivos correspondientes al módulo de registro y perfil del conductor.
+
+### Entrada #16
+
+- Fecha: 2026-11-13
+- Integrante: Stiven Hernandez
+- Herramienta: Manus
+- Objetivo: Implementar el Bloque 4 de perfil y configuración del conductor, incluyendo la consulta del perfil desde Firestore, la edición de datos personales, vehículo y documentos, además de la persistencia local de preferencias no sensibles con AsyncStorage.
+
+- Prompt: "Continuemos con el Bloque 4: Perfil y configuración del conductor. Vamos a implementar la pantalla de perfil, la edición de datos personales, la edición del vehículo, la edición de documentos y las preferencias con AsyncStorage. Mantén mis comentarios, conserva el estilo del repositorio y no modifiques la lógica de mapas, GPS, solicitudes ni viajes de Juan."
+
+- Prompts adicionales:
+
+  - "Dame el código para crear la pantalla de perfil del conductor usando useDriverSession."
+  - "Necesito crear una navegación propia para el perfil y la configuración del conductor."
+  - "Agrega un botón en MapScreen.js para navegar a DriverProfileNavigator sin modificar la lógica de GPS ni los viajes."
+  - "Implementemos la edición de datos personales sin reemplazar los demás campos del documento de Firestore."
+  - "Implementemos la edición de los datos del vehículo conservando la fotografía existente."
+  - "Implementemos la edición de documentos, fechas de vencimiento y correo de Mercado Pago."
+  - "Guardemos el idioma y las preferencias no sensibles únicamente en AsyncStorage."
+  - "Mantén mis comentarios y adapta el código al estilo que ya existe dentro de Git."
+
+- Resumen de la respuesta: Manus guió la creación de un módulo aislado para el perfil y la configuración del conductor. La pantalla `DriverProfileScreen.js` consume `driverProfile` y `driverId` desde `useDriverSession`, que recibe la información del documento correspondiente en Firestore mediante la suscripción existente con `onSnapshot`.
+
+  La pantalla de perfil muestra la fotografía almacenada en Cloudinary, el nombre, el correo electrónico, el estado de aprobación, los datos personales, la información del vehículo y el estado de los documentos. También incluye el botón de cierre de sesión mediante `logoutDriver`.
+
+  Se creó `DriverProfileNavigator.js` como un Stack Navigator independiente del flujo operativo de Juan. Este navegador contiene las pantallas del perfil y las pantallas de edición correspondientes. Posteriormente se registró dentro de `ApprovedDriverNavigator` en `App.js`, sin modificar la lógica de mapas, GPS, solicitudes ni viajes.
+
+  Para la edición de datos personales se agregó `updateDriverPersonalData` en `driverService.js` y se utilizó `updateDoc` con rutas específicas como `personal.fullName`, `personal.email` y `personal.phone`. De esta manera se actualizan únicamente los campos permitidos sin reemplazar la fotografía ni las demás secciones del perfil.
+
+  Para la edición del vehículo se agregó `updateDriverVehicleData`. La pantalla conserva las validaciones existentes del registro: placa colombiana en formato `ABC123`, año de cuatro dígitos, año no superior al actual, marca y modelo con máximo 30 caracteres, capacidad numérica y mínimo de seis pasajeros para la categoría XL. La fotografía actual del vehículo no se reemplaza en esta tarea.
+
+  Para la edición de documentos se agregó `updateDriverDocumentsData`. Se actualizaron el número de licencia, las fechas de vencimiento y el correo de Mercado Pago. Las fotografías de licencia, SOAT y revisión técnico-mecánica se conservaron sin cambios. Las fechas deben ser posteriores al día actual y el correo debe tener un formato válido.
+
+  Finalmente, se creó `preferencesService.js` y `DriverPreferencesScreen.js` para guardar el idioma y las preferencias no sensibles de forma local mediante AsyncStorage. No se guardaron en AsyncStorage el perfil completo, fotografías, documentos, credenciales, datos bancarios ni el estado de aprobación.
+
+- Qué se usó / modificó / descartó:
+
+  - Se reutilizó `useDriverSession` como fuente global del perfil y de la sesión.
+  - Se reutilizó la suscripción `onSnapshot` de Firestore para reflejar los cambios en tiempo real.
+  - Se utilizó `updateDoc` para actualizar partes específicas del documento `drivers/{driverId}`.
+  - Se creó `src/screens/driverProfile/DriverProfileScreen.js`.
+  - Se creó `src/screens/driverProfile/EditPersonalDataScreen.js`.
+  - Se creó `src/screens/driverProfile/EditVehicleScreen.js`.
+  - Se creó `src/screens/driverProfile/EditDocumentsScreen.js`.
+  - Se creó `src/screens/driverProfile/DriverPreferencesScreen.js`.
+  - Se creó `src/navigation/DriverProfileNavigator.js`.
+  - Se creó `src/services/preferencesService.js`.
+  - Se actualizó `src/services/driverService.js` con funciones de actualización parcial.
+  - Se actualizó `App.js` para registrar el navegador aislado del perfil.
+  - Se agregó un acceso rápido desde `MapScreen.js` hacia `DriverProfileNavigator`.
+  - Se conservaron los comentarios existentes escritos por el integrante.
+  - Se reutilizaron los estilos visuales de la aplicación.
+  - Se mantuvieron las validaciones ya existentes en el registro.
+  - No se modificó `isApproved`.
+  - No se guardaron datos sensibles en AsyncStorage.
+  - No se reemplazaron fotografías existentes de Cloudinary durante la edición de datos.
+  - No se modificaron funcionalmente los módulos de mapas, GPS, solicitudes de viaje ni viaje activo pertenecientes a Juan Deyan.
+  - No se modificaron las ramas de Juan ni se realizó ningún merge con `develop`.
+
+- Archivos y commit:
+
+  - `src/services/driverService.js`
+  - `src/services/preferencesService.js`
+  - `src/navigation/DriverProfileNavigator.js`
+  - `src/screens/driverProfile/DriverProfileScreen.js`
+  - `src/screens/driverProfile/EditPersonalDataScreen.js`
+  - `src/screens/driverProfile/EditVehicleScreen.js`
+  - `src/screens/driverProfile/EditDocumentsScreen.js`
+  - `src/screens/driverProfile/DriverPreferencesScreen.js`
+  - `src/screens/MapScreen.js`
+  - `App.js`
+  - `docs/AI_LOG.md`
+  - Commit: `127377e`
+
+- Verificación:
+
+  Se ejecutó:
+
+  ```powershell
+  npx expo start -c
+  git diff --check
+  git status
+
+Se verificó que:
+La pantalla de perfil leyera el conductor actual desde DriverContext.
+La foto de perfil se mostrara desde la URL de Cloudinary.
+Se mostraran los datos personales, del vehículo y de los documentos.
+El estado de aprobación se mostrara sin poder modificarse desde el perfil.
+El botón de cierre de sesión eliminara el driverId local y regresara al flujo de registro.
+DriverProfileNavigator abriera correctamente desde el mapa.
+La edición de datos personales actualizara únicamente los campos de personal.
+La fotografía de perfil permaneciera intacta después de editar los datos personales.
+La edición del vehículo validara la placa, el año, la capacidad y la categoría XL.
+La fotografía del vehículo permaneciera intacta después de editar sus datos.
+La edición de documentos validara las fechas futuras y el correo de Mercado Pago.
+Las fotografías de licencia, SOAT y revisión técnico-mecánica permanecieran intactas.
+isApproved no pudiera ser cambiado desde las pantallas de perfil.
+El idioma se guardara y recuperara correctamente desde AsyncStorage.
+Las preferencias no crearan ni modificaran datos sensibles en Firestore.
+La información actualizada apareciera nuevamente gracias a onSnapshot.
+El acceso al perfil no alterara la lógica de GPS, solicitudes ni viajes.
+Los módulos pertenecientes a Juan Deyan continuaran sin modificaciones funcionales.
+
+Aprendizaje: Aprendí a separar el perfil operativo del conductor de la navegación de mapas y viajes. También comprendí que un documento de Firestore debe actualizarse de forma parcial cuando solo se modifica una sección, utilizando rutas como personal.fullName o vehicle.category, para no sobrescribir accidentalmente fotografías ni otros datos.
+Además, comprendí que AsyncStorage es apropiado para preferencias locales no sensibles, como el idioma, pero no debe utilizarse como fuente de verdad para isApproved ni para guardar el perfil completo del conductor.
+
+Aprendí que un navegador independiente permite desarrollar el módulo de perfil sin interferir con la navegación de Juan. La integración puede realizarse mediante una ruta aislada dentro del flujo de conductores aprobados.
+Estado del bloque: En implementación y pruebas.
+
+Próximo paso: Completar las pruebas del Bloque 4, actualizar el hash real del commit y continuar con el Bloque 5 — Ganancias.

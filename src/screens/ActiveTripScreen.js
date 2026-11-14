@@ -1,12 +1,25 @@
+// AI-assisted: see docs/AI_LOG.md #13
 import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import FreeMap from '../components/FreeMap';
 import { DriverContext } from '../context/DriverContext';
+import useDriverLocation from '../services/useDriverLocation';
 
 export default function ActiveTripScreen({ route, navigation }) {
     const { finishTrip } = useContext(DriverContext);
     const tripData = route.params?.trip;
     const [tripStatus, setTripStatus] = useState('accepted');
+    
+    // Obtenemos tu ubicación del GPS
+    const { location } = useDriverLocation(true);
+
+    // --- PARCHE DE SEGURIDAD PARA EL EMULADOR ---
+    // Si el GPS falla o el emulador nos manda a California (Latitud > 10), 
+    // forzamos tu ubicación física en Robledo para que la ruta no explote.
+    let safeDriverCoords = location?.coords;
+    if (!safeDriverCoords || safeDriverCoords.latitude > 10) {
+        safeDriverCoords = { latitude: 6.2780, longitude: -75.5920 }; // Coordenadas de Robledo
+    }
 
     if (!tripData || !tripData.originCoords || !tripData.destinationCoords) {
         return (
@@ -21,10 +34,11 @@ export default function ActiveTripScreen({ route, navigation }) {
 
     return (
         <View style={{ flex: 1 }}>
-            {/* MAPA GRATUITO CON ORIGEN Y DESTINO */}
             <FreeMap 
+                driverLocation={safeDriverCoords}
                 originCoords={tripData.originCoords} 
                 destinationCoords={tripData.destinationCoords} 
+                tripStatus={tripStatus}
             />
 
             <View style={styles.bottomCard}>

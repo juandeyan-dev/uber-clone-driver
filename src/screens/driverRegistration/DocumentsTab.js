@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useRegistration } from './RegistrationContext';
-
-// AI-assistant: see docs/AI_LOG.md #4
+// AI-assistant: see docs/AI_LOG.md #4, #10, #13
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
+
+import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useRegistration } from '../driverRegistration/RegistrationContext';
 
 export default function DocumentsTab() {
     const { form, updateSection } = useRegistration();
     const documents = form.documents;
 
     const [errors, setErrors] = useState({});
+
+    const [activeDateField, setActiveDateField] = useState(null);
 
     function handleChange(field, value) {
         updateSection('documents', field, value);
@@ -34,6 +38,36 @@ export default function DocumentsTab() {
         }));
     }
 
+    async function selectDocumentPhoto(field) {
+        const permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permissionResult.granted) {
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                [field]: 'Se necesita permiso para seleccionar una imagen.',
+            }));
+
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets?.length > 0) {
+            updateSection('documents', field, result.assets[0].uri);
+
+            setErrors((previousErrors) => ({
+                ...previousErrors,
+                [field]: '',
+            }));
+        }
+    }
+
     function toggleTerms() {
         updateSection(
             'documents',
@@ -47,6 +81,53 @@ export default function DocumentsTab() {
                 ? 'Debes aceptar los términos para continuar'
                 : '',
         }));
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function getDateValue(field) {
+        const storedDate = documents[field];
+
+        if (storedDate) {
+            return new Date(`${storedDate}T12:00:00`);
+        }
+
+        return new Date();
+    }
+
+    function handleExpirationDateChange(event, selectedDate) {
+        setActiveDateField(null);
+
+        if (!selectedDate || !activeDateField) {
+            return;
+        }
+
+        const formattedDate = formatDate(selectedDate);
+
+        handleChange(activeDateField, formattedDate);
+    }
+
+    function renderDatePicker(field) {
+        if (activeDateField !== field) {
+            return null;
+        }
+
+        return (
+            <DateTimePicker
+                value={getDateValue(field)}
+                mode="date"
+                display="default"
+                minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
+                onValueChange={handleExpirationDateChange}
+                onDismiss={() => setActiveDateField(null)}
+            />
+        );
     }
 
     return (
@@ -66,60 +147,86 @@ export default function DocumentsTab() {
             <Text style={styles.label}>Foto de licencia</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => handleChange('licensePhoto', 'pendiente')}
+                onPress={() => selectDocumentPhoto('licensePhoto')}
             >
-                <Text>Seleccionar foto</Text>
+                <Text>
+                    {documents.licensePhoto
+                        ? 'Cambiar foto de licencia'
+                        : 'Seleccionar foto de licencia'}
+                </Text>
             </TouchableOpacity>
 
+            <ErrorMessage message={errors.licensePhoto} />
+
             <Text style={styles.label}>Vencimiento de licencia</Text>
-            <TextInput
-                style={styles.input}
-                value={documents.licenseExpiration}
-                onChangeText={(value) =>
-                    handleChange('licenseExpiration', value)
-                }
-                placeholder="YYYY-MM-DD"
-            />
+            <TouchableOpacity style={styles.dateButton}
+                onPress={() => setActiveDateField('licenseExpiration')}
+            >
+                <Text style={styles.dateButtonText}>
+                    {documents.licenseExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('licenseExpiration')}
+
             <ErrorMessage message={errors.licenseExpiration} />
 
             <Text style={styles.label}>Foto del SOAT</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() => handleChange('soatPhoto', 'pendiente')}
+                onPress={() => selectDocumentPhoto('soatPhoto')}
             >
-                <Text>Seleccionar foto</Text>
+                <Text>
+                    {documents.soatPhoto ? 'Cambiar foto del SOAT' : 'Seleccionar foto del SOAT'}
+                </Text>
             </TouchableOpacity>
 
+            <ErrorMessage message={errors.soatPhoto} />
+
             <Text style={styles.label}>Vencimiento del SOAT</Text>
-            <TextInput
-                style={styles.input}
-                value={documents.soatExpiration}
-                onChangeText={(value) => handleChange('soatExpiration', value)}
-                placeholder="YYYY-MM-DD"
-            />
+            <TouchableOpacity style={styles.dateButton}
+                onPress={() => setActiveDateField('soatExpiration')}
+            >
+                <Text style={styles.dateButtonText}>
+                    {documents.soatExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('soatExpiration')}
+
             <ErrorMessage message={errors.soatExpiration} />
 
             <Text style={styles.label}>Foto de revisión técnico-mecánica</Text>
             <TouchableOpacity
                 style={styles.photoButton}
-                onPress={() =>
-                    handleChange('technicalReviewPhoto', 'pendiente')
-                }
+                onPress={() => selectDocumentPhoto('technicalReviewPhoto')}
             >
-                <Text>Seleccionar foto</Text>
+                <Text>
+                    {documents.technicalReviewPhoto
+                        ? 'Cambiar foto de revisión'
+                        : 'Seleccionar foto de revisión técnico-mecánica'}
+                </Text>
             </TouchableOpacity>
+
+            <ErrorMessage message={errors.technicalReviewPhoto} />
 
             <Text style={styles.label}>
                 Vencimiento de revisión técnico-mecánica
             </Text>
-            <TextInput
-                style={styles.input}
-                value={documents.technicalReviewExpiration}
-                onChangeText={(value) =>
-                    handleChange('technicalReviewExpiration', value)
+
+            <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() =>
+                    setActiveDateField('technicalReviewExpiration')
                 }
-                placeholder="YYYY-MM-DD"
-            />
+            >
+                <Text style={styles.dateButtonText}>
+                    {documents.technicalReviewExpiration || 'seleccionar fecha'}
+                </Text>
+            </TouchableOpacity>
+
+            {renderDatePicker('technicalReviewExpiration')}
+
             <ErrorMessage message={errors.technicalReviewExpiration} />
 
             <Text style={styles.label}>
@@ -162,7 +269,6 @@ function ErrorMessage({ message }) {
 
     return <Text style={styles.error}>{message}</Text>;
 }
-
 const styles = StyleSheet.create({
     container: {
         padding: 20,
@@ -185,6 +291,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
         backgroundColor: '#fff',
+    },
+    dateButton: {
+        borderWidth: 1,
+        borderColor: '#bdbdbd',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        backgroundColor: '#fff'
+    },
+    dateButtonText: {
+        color: '#333'
     },
     photoButton: {
         borderWidth: 1,
