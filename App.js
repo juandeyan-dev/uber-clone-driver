@@ -1,30 +1,49 @@
 // AI-assisted: see docs/AI_LOG.md #15 & #16
 // Estructura base sugerida por IA; código analizado, comprendido y transcrito manualmente para asegurar el aprendizaje
-// Guardián de navegación superior: bloquea el montaje de MapScreen y módulos operativos hasta confirmar isApproved === true.
+// Enrutamiento principal basado en sesión y aprobación del conductor.
+// MapScreen solamente se monta después de confirmar isApproved === true.
 
 import 'react-native-gesture-handler';
-import React from 'react';
-import {ActivityIndicator,StyleSheet,Text,View,} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 
-import {DriverProvider,useDriverSession,} from './src/context/DriverContext';
+import React from 'react';
+
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
+import {
+  NavigationContainer,
+} from '@react-navigation/native';
+
+import {
+  createStackNavigator,
+} from '@react-navigation/stack';
+
+import {
+  DriverProvider,
+  useDriverSession,
+} from './src/context/DriverContext';
 
 import DriverRegistrationNavigator from './src/navigation/DriverRegistrationNavigator';
+import DriverProfileNavigator from './src/navigation/DriverProfileNavigator';
+
 import PendingApprovalScreen from './src/screens/driverRegistration/PendingApprovalScreen';
 import MapScreen from './src/screens/MapScreen';
 import ActiveTripScreen from './src/screens/ActiveTripScreen';
 
-// Importamos el navegador aislado del perfil y configuración del conductor
-import DriverProfileNavigator from './src/navigation/DriverProfileNavigator';
-
 const Stack = createStackNavigator();
 
-// Pantalla de carga mientras se valida AsyncStorage y Firestore
 function LoadingScreen() {
   return (
     <View style={styles.centeredScreen}>
-      <ActivityIndicator size="large" color="#1976d2" />
+      <ActivityIndicator
+        size="large"
+        color="#1976d2"
+      />
+
       <Text style={styles.statusText}>
         Verificando la sesión del conductor...
       </Text>
@@ -32,29 +51,42 @@ function LoadingScreen() {
   );
 }
 
-// Pantalla de error si falla la lectura de la sesión
 function SessionErrorScreen({ message }) {
   return (
     <View style={styles.centeredScreen}>
       <Text style={styles.errorTitle}>
         No fue posible cargar la sesión
       </Text>
+
       <Text style={styles.errorText}>
-        {message || 'Intenta nuevamente más tarde.'}
+        {message ||
+          'Intenta nuevamente más tarde.'}
       </Text>
     </View>
   );
 }
 
-// Navegador exclusivo para conductores aprobados (MapScreen, ActiveTrip y DriverProfileNavigator)
+/*
+ * Este navegador solamente se renderiza cuando:
+ *
+ * sessionStatus === 'approved'
+ *
+ * Por esa razón, MapScreen no se monta para conductores
+ * sin aprobación confirmada.
+ */
 function ApprovedDriverNavigator() {
   return (
-    <Stack.Navigator initialRouteName="MapScreen">
+    <Stack.Navigator
+      initialRouteName="MapScreen"
+    >
       <Stack.Screen
         name="MapScreen"
         component={MapScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
+
       <Stack.Screen
         name="ActiveTrip"
         component={ActiveTripScreen}
@@ -63,10 +95,7 @@ function ApprovedDriverNavigator() {
           headerLeft: () => null,
         }}
       />
-      {/* 
-        Nuevo navegador de perfil integrado de forma aislada. 
-        Mantiene oculto su header superior para que cada pantalla interna controle sus títulos.
-      */}
+
       <Stack.Screen
         name="DriverProfileNavigator"
         component={DriverProfileNavigator}
@@ -78,7 +107,28 @@ function ApprovedDriverNavigator() {
   );
 }
 
-// Enrutador condicional basado en el estado de sesión y aprobación
+/*
+ * Navegador mostrado cuando no existe driverId local.
+ */
+function RegistrationRootNavigator() {
+  return (
+    <Stack.Navigator
+      key="registration-root"
+    >
+      <Stack.Screen
+        name="DriverRegistration"
+        component={DriverRegistrationNavigator}
+        options={{
+          title: 'Registro de conductor',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+/*
+ * Decide qué flujo de la aplicación puede mostrarse.
+ */
 function ApplicationNavigator() {
   const {
     sessionReady,
@@ -86,39 +136,55 @@ function ApplicationNavigator() {
     sessionError,
   } = useDriverSession();
 
-  // 1. Cargando sesión inicial
-  if (!sessionReady || sessionStatus === 'loading') {
+  /*
+   * Mientras no termine la verificación, no se monta
+   * ningún navegador operativo ni MapScreen.
+   */
+  if (
+    !sessionReady ||
+    sessionStatus === 'loading'
+  ) {
     return <LoadingScreen />;
   }
 
-  // 2. Error al leer sesión o perfil
+  /*
+   * Error de AsyncStorage o Firestore.
+   */
   if (sessionStatus === 'error') {
-    return <SessionErrorScreen message={sessionError} />;
-  }
-
-  // 3. Sin sesión guardada -> Muestra el flujo de Registro
-  if (sessionStatus === 'no-session') {
     return (
-      <Stack.Navigator>
-        <Stack.Screen
-          name="DriverRegistration"
-          component={DriverRegistrationNavigator}
-          options={{ title: 'Registro de conductor' }}
-        />
-      </Stack.Navigator>
+      <SessionErrorScreen
+        message={sessionError}
+      />
     );
   }
 
-  // 4. Con sesión pero pendiente de aprobación -> Muestra pantalla de espera
+  /*
+   * No existe driverId local.
+   * El inicio correcto es el registro.
+   */
+  if (sessionStatus === 'no-session') {
+    return <RegistrationRootNavigator />;
+  }
+
+  /*
+   * Existe driverId, pero Firestore no confirmó
+   * isApproved === true.
+   */
   if (sessionStatus === 'pending') {
     return <PendingApprovalScreen />;
   }
 
-  // 5. Aprobado -> Permite acceso completo al mapa, viajes y perfil
+  /*
+   * El mapa solamente se permite en este caso.
+   */
   if (sessionStatus === 'approved') {
     return <ApprovedDriverNavigator />;
   }
 
+  /*
+   * Protección adicional ante cualquier estado inesperado.
+   * Nunca se envía al mapa por defecto.
+   */
   return <LoadingScreen />;
 }
 
@@ -157,5 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#555',
     textAlign: 'center',
+    textAlignVertical: 'center',
   },
 });
